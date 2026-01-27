@@ -1,0 +1,31 @@
+{
+  "name": "binaryshapes-plugins",
+  "owner": {
+    "name": "Binary Shapes",
+    "email": "dev@ccosming.com"
+  },
+  "metadata": {
+    "description": "Internal Claude Code plugins for Binary Shapes team",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "fullstack-toolkit",
+      "source": "./fullstack-toolkit",
+      "description": "Modular toolkit for fullstack applications based on TypeScript and Python using Moon monorepo and Prototools",
+      "version": "1.0.0",
+      "author": {
+        "name": "Carlos Cosming",
+        "email": "dev@ccosming.com"
+      },
+      "keywords": [
+        "typescript",
+        "python",
+        "fullstack",
+        "moon",
+        "proto",
+        "monorepo"
+      ]
+    }
+  ]
+}

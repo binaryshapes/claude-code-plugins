@@ -1,0 +1,56 @@
+{
+  "$schema": "https://claude.ai/schemas/settings.json",
+  "hooks": {
+    "preToolCall": [
+      {
+        "matcher": "Edit|Write",
+        "command": "moon check --affected 2>/dev/null || true",
+        "description": "Check affected projects before editing",
+        "timeout": 30000,
+        "blocking": false
+      }
+    ],
+    "postToolCall": [
+      {
+        "matcher": "Edit",
+        "command": "if [[ \"${file}\" == *.ts ]] || [[ \"${file}\" == *.tsx ]]; then pnpm eslint --fix \"${file}\" 2>/dev/null || true; fi",
+        "description": "Auto-fix ESLint issues after TypeScript edits",
+        "timeout": 10000,
+        "blocking": false
+      },
+      {
+        "matcher": "Edit",
+        "command": "if [[ \"${file}\" == *.py ]]; then uv run ruff format \"${file}\" 2>/dev/null || true; fi",
+        "description": "Auto-format Python files after edits",
+        "timeout": 10000,
+        "blocking": false
+      },
+      {
+        "matcher": "Write",
+        "command": "if [[ \"${file}\" == *.ts ]] || [[ \"${file}\" == *.tsx ]]; then pnpm prettier --write \"${file}\" 2>/dev/null || true; fi",
+        "description": "Format new TypeScript files",
+        "timeout": 10000,
+        "blocking": false
+      }
+    ]
+  },
+  "codeStyle": {
+    "typescript": {
+      "preferConst": true,
+      "preferArrowFunctions": true,
+      "useTypeImports": true,
+      "useSingleQuotes": true
+    },
+    "python": {
+      "useTypeHints": true,
+      "useDocstrings": true,
+      "lineLength": 88
+    }
+  },
+  "conventions": {
+    "components": "packages/ui/src/components",
+    "hooks": "packages/*/src/hooks",
+    "utils": "packages/*/src/lib",
+    "tests": "**/*.test.{ts,tsx,py}"
+  }
+}

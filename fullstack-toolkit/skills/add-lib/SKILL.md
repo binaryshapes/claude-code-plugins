@@ -1,0 +1,345 @@
+---
+name: add-lib
+description: Add a library to the monorepo (TypeScript or Python)
+---
+
+# /add-lib
+
+Add a reusable library to the monorepo.
+
+## Description
+
+This skill scaffolds a reusable library package. Libraries are placed in the `packages/` directory and can be imported by apps and other packages.
+
+- **Python libraries**: Use `uv init --lib` + post-processing
+- **TypeScript libraries**: Use templates (no official CLIs available)
+
+## Usage
+
+```
+/add-lib
+```
+
+The skill will prompt you for:
+1. **Language**: TypeScript or Python
+2. **Type**: Library type (varies by language)
+3. **Name**: Library name
+
+## Supported Libraries
+
+### TypeScript Libraries
+
+| Type | Description |
+|------|-------------|
+| `ts-lib` | Pure TypeScript library with dual ESM/CJS via tsup |
+| `react-lib` | React component library |
+| `ui` | UI component library with web and native support (shadcn/ui + NativeWind) |
+
+### Python Libraries
+
+| Type | Description |
+|------|-------------|
+| `py-lib` | Python library with type hints and PEP 561 |
+
+## Instructions
+
+### Step 1: Ask Language
+
+Prompt the user to select a language:
+
+**Question**: "What language would you like to use?"
+- **TypeScript** - TypeScript/JavaScript libraries
+- **Python** - Python libraries
+
+### Step 2: Ask Library Type
+
+Based on the language selection, prompt for library type:
+
+**If TypeScript**:
+"What type of TypeScript library?"
+- **ts-lib** - Pure TypeScript library (utilities, business logic, API clients)
+- **react-lib** - React component library (hooks, components, providers)
+- **ui** - UI components with web and native exports
+
+**If Python**:
+Skip this step - Python has only one library type (`py-lib`).
+
+### Step 3: Ask Library Name
+
+Prompt for the library name:
+- TypeScript: lowercase, kebab-case (e.g., `shared-utils`)
+- Python: lowercase, snake_case (e.g., `shared_utils`)
+
+For UI library, suggest default name: `ui`
+
+### Step 4: Verify/Configure Toolchain
+
+Ensure the appropriate toolchain is configured (same as `/add-app`).
+
+---
+
+## Step 5: Scaffold Library
+
+### Python: Library (`py-lib`) - Official CLI + Post-processing
+
+#### 5a. Run Official CLI
+
+```bash
+uv init packages/{{name}} --lib
+```
+
+#### 5b. Post-processing
+
+1. **Create proper `src/` layout structure**:
+   ```bash
+   mkdir -p packages/{{name}}/src/{{name}}/lib
+   touch packages/{{name}}/src/{{name}}/__init__.py
+   touch packages/{{name}}/src/{{name}}/py.typed
+   touch packages/{{name}}/src/{{name}}/lib/__init__.py
+   ```
+
+2. **Create example module and tests**
+
+3. **Update `pyproject.toml`** with proper configuration
+
+4. **Create `moon.yml`** with Python tasks (build, test, lint, format, typecheck)
+
+---
+
+### TypeScript: Pure Library (`ts-lib`) - Template
+
+#### 5a. Copy Template
+
+```bash
+cp -r templates/lib-ts/ packages/{{name}}/
+```
+
+#### 5b. Post-processing
+
+1. Replace `{{name}}` and `{{scope}}` placeholders in all files
+
+2. Ensure `tsconfig.json` extends `../../tsconfig.base.json`
+
+3. **Create `moon.yml`** with TypeScript tasks (build, dev, test, lint, typecheck)
+
+---
+
+### TypeScript: React Library (`react-lib`) - Template
+
+#### 5a. Copy Template
+
+```bash
+cp -r templates/lib-react/ packages/{{name}}/
+```
+
+#### 5b. Post-processing
+
+1. Replace `{{name}}` and `{{scope}}` placeholders
+
+2. **Create `moon.yml`** (same as ts-lib)
+
+---
+
+### TypeScript: UI Library (`ui`) - Template
+
+This creates a unified UI library with support for both web and native platforms.
+
+#### 5a. Copy Template
+
+```bash
+cp -r templates/lib-ui/ packages/{{name}}/
+```
+
+Default name: `ui`
+
+#### 5b. Structure
+
+```
+packages/ui/
+├── src/
+│   ├── index.ts              # Common exports (tokens, utils)
+│   ├── utils.ts              # cn() utility
+│   ├── tokens/               # Design tokens (colors, spacing)
+│   │   ├── index.ts
+│   │   ├── colors.ts
+│   │   └── spacing.ts
+│   ├── web/                  # Web components (React DOM)
+│   │   ├── index.ts
+│   │   └── components/
+│   │       └── button.tsx
+│   └── native/               # Native components (React Native)
+│       ├── index.ts
+│       └── components/
+│           └── button.tsx
+├── package.json
+├── tsconfig.json
+├── tsup.config.ts
+├── tailwind.config.ts
+└── moon.yml
+```
+
+#### 5c. Package exports
+
+```json
+{
+  "exports": {
+    ".": "./dist/index.js",
+    "./web": "./dist/web/index.js",
+    "./native": "./src/native/index.ts"
+  }
+}
+```
+
+#### 5d. Usage in apps
+
+```typescript
+// Common utilities and tokens
+import { cn, colors } from '@scope/ui';
+
+// Web components (Next.js, React web apps)
+import { Button } from '@scope/ui/web';
+
+// Native components (Expo, React Native)
+import { Button } from '@scope/ui/native';
+```
+
+#### 5e. Post-processing
+
+1. Replace `{{name}}` and `{{scope}}` placeholders
+
+2. **Create `moon.yml`**:
+   ```yaml
+   $schema: 'https://moonrepo.dev/schemas/project.json'
+
+   type: 'library'
+   language: 'typescript'
+   platform: 'node'
+
+   tasks:
+     build:
+       command: 'pnpm build'
+       inputs:
+         - 'src/**/*'
+         - 'package.json'
+         - 'tsconfig.json'
+         - 'tsup.config.ts'
+         - 'tailwind.config.ts'
+       outputs:
+         - 'dist'
+
+     dev:
+       command: 'pnpm dev'
+       local: true
+       persistent: true
+
+     lint:
+       command: 'pnpm lint'
+       inputs:
+         - 'src/**/*'
+
+     typecheck:
+       command: 'pnpm typecheck'
+       inputs:
+         - 'src/**/*'
+         - 'tsconfig.json'
+   ```
+
+---
+
+## Step 6: Install Dependencies
+
+**TypeScript:**
+```bash
+pnpm install
+```
+
+**Python:**
+```bash
+cd packages/{{name}}
+uv sync
+```
+
+---
+
+## Step 7: Build Library
+
+```bash
+moon run {{name}}:build
+```
+
+---
+
+## Step 8: Summary
+
+```
+Created {{language}} library: packages/{{name}}
+
+Type: {{type}}
+Package name: @{{scope}}/{{name}} (or {{name}} for Python)
+
+Commands:
+  moon run {{name}}:build    # Build library
+  moon run {{name}}:dev      # Watch mode (TypeScript only)
+  moon run {{name}}:test     # Run tests
+
+To use in other packages:
+  TypeScript:
+    1. Add to package.json: "@{{scope}}/{{name}}": "workspace:*"
+    2. Import: import { ... } from '@{{scope}}/{{name}}';
+
+  Python:
+    1. Add to pyproject.toml: "{{name}}"
+    2. Add to [tool.uv.sources]: {{name}} = { workspace = true }
+    3. Import: from {{name}} import ...
+```
+
+---
+
+## Consuming Libraries
+
+### TypeScript
+
+In `apps/my-app/package.json`:
+```json
+{
+  "dependencies": {
+    "@{{scope}}/{{name}}": "workspace:*"
+  }
+}
+```
+
+### UI Library specific
+
+```typescript
+// In a Next.js app
+import { Button } from '@scope/ui/web';
+
+// In an Expo app
+import { Button } from '@scope/ui/native';
+
+// Common utilities everywhere
+import { cn, colors, spacing } from '@scope/ui';
+```
+
+### Python
+
+In `apps/my_app/pyproject.toml`:
+```toml
+[project]
+dependencies = ["{{name}}"]
+
+[tool.uv.sources]
+{{name}} = { workspace = true }
+```
+
+---
+
+## Important Notes
+
+- **Python libraries**: Use `uv init --lib` for latest Python packaging standards
+- **TypeScript libraries**: Use templates (no official CLIs for library scaffolding)
+- Libraries are placed in `packages/` directory
+- TypeScript libraries use dual ESM/CJS output for compatibility
+- Python libraries include `py.typed` marker for PEP 561 compliance
+- **UI library** exports separate paths for web (`/web`) and native (`/native`) platforms
+- Moon handles dependency graph for builds automatically

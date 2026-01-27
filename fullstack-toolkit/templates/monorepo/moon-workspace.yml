@@ -1,0 +1,26 @@
+$schema: 'https://moonrepo.dev/schemas/workspace.json'
+
+# Projects configuration - will be populated by language-specific skills
+projects:
+  - 'apps/*'
+  - 'packages/*'
+  - 'tools/*'
+
+# Version control
+vcs:
+  manager: 'git'
+  defaultBranch: 'main'
+
+# Telemetry
+telemetry: false
+
+# Notifier configuration
+notifier:
+  webhookUrl: null
+
+# Runner configuration
+runner:
+  # Cache task outputs
+  archivableTargets:
+    - ':build'
+    - ':test'
