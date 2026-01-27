@@ -85,10 +85,10 @@ grep -q "node" .prototools 2>/dev/null
 
 If not configured:
 
-1. Add to `.prototools` (use latest LTS versions):
-   ```toml
-   node = "lts"
-   pnpm = "latest"
+1. Pin LTS versions using Proto (this writes exact versions to `.prototools`):
+   ```bash
+   proto pin node lts
+   proto pin pnpm lts
    ```
 
 2. Create root `package.json` with workspaces:
@@ -131,10 +131,10 @@ grep -q "python" .prototools 2>/dev/null
 
 If not configured:
 
-1. Add to `.prototools` (use latest stable versions):
-   ```toml
-   python = "latest"
-   uv = "latest"
+1. Pin stable versions using Proto (this writes exact versions to `.prototools`):
+   ```bash
+   proto pin python lts
+   proto pin uv lts
    ```
 
 2. Copy toolchain configs from `templates/toolchain-py/`:
@@ -549,10 +549,10 @@ uv init apps/{{name}} --lib
 
    [project.optional-dependencies]
    dev = [
-       "mypy>=1.0.0",
-       "pytest>=8.0.0",
-       "pytest-cov>=4.0.0",
-       "ruff>=0.8.0",
+       "mypy>=1.14.0",
+       "pytest>=8.3.0",
+       "pytest-cov>=4.1.0",
+       "ruff>=0.9.0",
    ]
 
    [project.scripts]

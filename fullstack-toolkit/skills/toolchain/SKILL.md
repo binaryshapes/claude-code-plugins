@@ -52,14 +52,17 @@ Add a new tool to the toolchain.
 
 **Arguments:**
 - `tool`: Tool name (node, pnpm, python, uv, bun, deno, go, rust, etc.)
-- `version` (optional): Specific version or "latest"
+- `version` (optional): Specific version, "lts" for LTS version, or omit for LTS default
 
 **Examples:**
 ```
-/toolchain add node          # Add latest Node.js
-/toolchain add python 3.12   # Add Python 3.12
-/toolchain add bun latest    # Add latest Bun
+/toolchain add node          # Add Node.js LTS (pinned to exact version)
+/toolchain add node lts      # Add Node.js LTS (pinned to exact version)
+/toolchain add python 3.14   # Add Python 3.14 (pinned to exact version)
+/toolchain add bun 1.2.0     # Add specific Bun version
 ```
+
+**Note:** Proto always pins exact versions to `.prototools` for reproducibility.
 
 ### upgrade
 
@@ -112,11 +115,11 @@ proto list
 ### For `/toolchain add <tool> [version]`
 
 1. Validate the tool name is supported by Proto
-2. If version not specified, use "latest"
-3. Update `.prototools` file:
+2. If version not specified, use "lts" (Proto will resolve to exact LTS version)
+3. Pin the tool (Proto writes exact version to `.prototools`):
 
 ```bash
-proto pin <tool> <version>
+proto pin <tool> <version>   # version can be "lts", specific version, or omitted for lts
 ```
 
 4. Install the tool:
@@ -186,15 +189,15 @@ For full list: `proto list-plugins`
 ## Example Workflow
 
 ```
-# Initialize toolchain
-/toolchain add node 22
-/toolchain add pnpm latest
+# Initialize toolchain with LTS versions (Proto pins exact versions)
+/toolchain add node lts      # e.g., pins to 22.13.1
+/toolchain add pnpm lts      # e.g., pins to 10.28.1
 
-# Later, upgrade everything
+# Later, upgrade everything to latest LTS
 /toolchain upgrade
 
 # Pin to specific version for stability
-/toolchain pin node 22.0.0
+/toolchain pin node 22.13.1
 
 # Check current state
 /toolchain list
