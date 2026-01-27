@@ -91,12 +91,23 @@ If not configured:
    proto pin pnpm lts
    ```
 
-2. Create root `package.json` with workspaces:
+2. **Read the installed versions from `.prototools`** to get the exact versions Proto pinned:
+   ```bash
+   # Extract versions from .prototools (TOML format)
+   NODE_VERSION=$(grep '^node' .prototools | sed 's/.*= *"//' | sed 's/".*//')
+   PNPM_VERSION=$(grep '^pnpm' .prototools | sed 's/.*= *"//' | sed 's/".*//')
+   ```
+
+3. Create root `package.json` with workspaces, **using the actual Proto versions**:
    ```json
    {
      "name": "{{PROJECT_NAME}}",
      "private": true,
      "type": "module",
+     "packageManager": "pnpm@{{PNPM_VERSION}}",
+     "engines": {
+       "node": ">={{NODE_VERSION}}"
+     },
      "workspaces": ["apps/*", "packages/*", "tools/*"],
      "scripts": {
        "lint": "eslint .",
@@ -108,15 +119,17 @@ If not configured:
    }
    ```
 
-3. Copy toolchain configs from `templates/toolchain-ts/`:
+   **Important:** Replace `{{PNPM_VERSION}}` and `{{NODE_VERSION}}` with the actual versions read from `.prototools`.
+
+4. Copy toolchain configs from `templates/toolchain-ts/`:
    - `tsconfig.base.json`
    - `eslint.config.js`
    - `prettier.config.js`
    - `vitest.config.ts`
 
-4. Add TypeScript hooks to `lefthook.yml`
+5. Add TypeScript hooks to `lefthook.yml`
 
-5. Install toolchain:
+6. Install toolchain:
    ```bash
    proto use
    pnpm install

@@ -2,9 +2,9 @@
   "name": "{{PROJECT_NAME}}",
   "private": true,
   "type": "module",
-  "packageManager": "pnpm@10.28.1",
+  "packageManager": "pnpm@{{PNPM_VERSION}}",
   "engines": {
-    "node": ">=22.0.0"
+    "node": ">={{NODE_VERSION}}"
   },
   "scripts": {
     "build": "moon run :build",
