@@ -76,90 +76,42 @@ Prompt for the application name:
 
 ### Step 4: Auto-configure Toolchain
 
-#### For TypeScript (if not already configured)
+The toolchain configuration is delegated to the `/toolchain` skill to ensure consistency and avoid duplication.
+
+#### For TypeScript
 
 Check if TypeScript toolchain exists:
+
 ```bash
 grep -q "node" .prototools 2>/dev/null
 ```
 
-If not configured:
+If not configured, invoke `/toolchain setup-typescript`. This will:
 
-1. Pin LTS versions using Proto (this writes exact versions to `.prototools`):
-   ```bash
-   proto pin node lts
-   proto pin pnpm lts
-   ```
+- Add Node.js and pnpm (LTS versions) via Proto
+- Create root `package.json` with workspaces and dynamic versions from `.prototools`
+- Copy TypeScript configs (`tsconfig.base.json`, `eslint.config.js`, `prettier.config.js`, `vitest.config.ts`)
+- Add TypeScript hooks to `lefthook.yml`
+- Run `proto use` and `pnpm install`
 
-2. **Read the installed versions from `.prototools`** to get the exact versions Proto pinned:
-   ```bash
-   # Extract versions from .prototools (TOML format)
-   NODE_VERSION=$(grep '^node' .prototools | sed 's/.*= *"//' | sed 's/".*//')
-   PNPM_VERSION=$(grep '^pnpm' .prototools | sed 's/.*= *"//' | sed 's/".*//')
-   ```
+See `/toolchain setup-typescript` for full details.
 
-3. Create root `package.json` with workspaces, **using the actual Proto versions**:
-   ```json
-   {
-     "name": "{{PROJECT_NAME}}",
-     "private": true,
-     "type": "module",
-     "packageManager": "pnpm@{{PNPM_VERSION}}",
-     "engines": {
-       "node": ">={{NODE_VERSION}}"
-     },
-     "workspaces": ["apps/*", "packages/*", "tools/*"],
-     "scripts": {
-       "lint": "eslint .",
-       "typecheck": "tsc --noEmit",
-       "format": "prettier --write .",
-       "format:check": "prettier --check .",
-       "test": "vitest run"
-     }
-   }
-   ```
-
-   **Important:** Replace `{{PNPM_VERSION}}` and `{{NODE_VERSION}}` with the actual versions read from `.prototools`.
-
-4. Copy toolchain configs from `templates/toolchain-ts/`:
-   - `tsconfig.base.json`
-   - `eslint.config.js`
-   - `prettier.config.js`
-   - `vitest.config.ts`
-
-5. Add TypeScript hooks to `lefthook.yml`
-
-6. Install toolchain:
-   ```bash
-   proto use
-   pnpm install
-   ```
-
-#### For Python (if not already configured)
+#### For Python
 
 Check if Python toolchain exists:
+
 ```bash
 grep -q "python" .prototools 2>/dev/null
 ```
 
-If not configured:
+If not configured, invoke `/toolchain setup-python`. This will:
 
-1. Pin stable versions using Proto (this writes exact versions to `.prototools`):
-   ```bash
-   proto pin python lts
-   proto pin uv lts
-   ```
+- Add Python and uv (LTS versions) via Proto
+- Copy Python configs (`ruff.toml`, `mypy.ini`)
+- Add Python hooks to `lefthook.yml`
+- Run `proto use`
 
-2. Copy toolchain configs from `templates/toolchain-py/`:
-   - `ruff.toml`
-   - `mypy.ini`
-
-3. Add Python hooks to `lefthook.yml`
-
-4. Install toolchain:
-   ```bash
-   proto use
-   ```
+See `/toolchain setup-python` for full details.
 
 ---
 
