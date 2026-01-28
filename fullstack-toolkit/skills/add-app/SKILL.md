@@ -262,7 +262,6 @@ pnpm create next-app@latest apps/{{name}} \
      dev:
        command: 'pnpm dev'
        local: true
-       persistent: true
 
      build:
        command: 'pnpm build'
@@ -409,17 +408,14 @@ pnpm create expo-app@latest apps/{{name}} --template blank-typescript
      dev:
        command: 'pnpm dev'
        local: true
-       persistent: true
 
      android:
        command: 'pnpm android'
        local: true
-       persistent: true
 
      ios:
        command: 'pnpm ios'
        local: true
-       persistent: true
 
      lint:
        command: 'pnpm lint'
@@ -566,7 +562,6 @@ pnpm create hono@latest apps/{{name}} --template cloudflare-workers
      dev:
        command: 'pnpm dev'
        local: true
-       persistent: true
 
      build:
        command: 'pnpm build'
@@ -660,7 +655,6 @@ pnpm dlx @nestjs/cli@latest new {{name}} \
      dev:
        command: 'pnpm dev'
        local: true
-       persistent: true
 
      build:
        command: 'pnpm build'
@@ -895,7 +889,6 @@ uv init apps/{{name}} --lib
      dev:
        command: 'uv run uvicorn {{name}}.main:app --reload --port {{port}}'
        local: true
-       persistent: true
 
      start:
        command: 'uv run uvicorn {{name}}.main:app --port {{port}}'

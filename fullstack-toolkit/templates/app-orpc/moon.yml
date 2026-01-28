@@ -8,7 +8,6 @@ tasks:
   dev:
     command: 'pnpm dev'
     local: true
-    persistent: true
 
   build:
     command: 'pnpm build'

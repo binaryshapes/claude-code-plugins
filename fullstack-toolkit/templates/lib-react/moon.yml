@@ -18,7 +18,6 @@ tasks:
   dev:
     command: 'pnpm dev'
     local: true
-    persistent: true
 
   test:
     command: 'pnpm test'

@@ -19,7 +19,6 @@ tasks:
   dev:
     command: 'pnpm dev'
     local: true
-    persistent: true
 
   lint:
     command: 'pnpm lint'
