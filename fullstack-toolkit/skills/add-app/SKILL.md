@@ -152,21 +152,34 @@ pnpm create next-app@latest apps/{{name}} \
 
 #### 5b. Post-processing
 
-1. **Remove unnecessary files** (already handled by monorepo):
+1. **Merge `.gitignore` into root** - Before removing, consolidate scaffold gitignore entries:
+   ```bash
+   # Read scaffold .gitignore and append missing entries to root .gitignore
+   if [ -f apps/{{name}}/.gitignore ]; then
+     while IFS= read -r line || [ -n "$line" ]; do
+       # Skip empty lines and comments for comparison
+       if [ -n "$line" ] && ! grep -qxF "$line" .gitignore 2>/dev/null; then
+         echo "$line" >> .gitignore
+       fi
+     done < apps/{{name}}/.gitignore
+   fi
+   ```
+
+2. **Remove unnecessary files** (already handled by monorepo):
    ```bash
    rm -f apps/{{name}}/.eslintrc.json
    rm -f apps/{{name}}/README.md
    rm -f apps/{{name}}/.gitignore
    ```
 
-2. **Clean up `/public` directory** - Remove default Next.js assets:
+3. **Clean up `/public` directory** - Remove default Next.js assets:
    ```bash
    rm -f apps/{{name}}/public/*.svg
    rm -f apps/{{name}}/public/*.ico
    rm -f apps/{{name}}/public/*.png
    ```
 
-3. **Simplify `src/app/page.tsx`** - Replace with minimal Hello World:
+4. **Simplify `src/app/page.tsx`** - Replace with minimal Hello World:
    ```tsx
    export default function Home() {
      return (
@@ -177,7 +190,7 @@ pnpm create next-app@latest apps/{{name}} \
    }
    ```
 
-4. **Simplify `src/app/layout.tsx`** - Clean metadata and remove font imports:
+5. **Simplify `src/app/layout.tsx`** - Clean metadata and remove font imports:
    ```tsx
    import type { Metadata } from "next";
    import "./globals.css";
@@ -200,14 +213,14 @@ pnpm create next-app@latest apps/{{name}} \
    }
    ```
 
-5. **Simplify `src/app/globals.css`** - Keep only Tailwind directives:
+6. **Simplify `src/app/globals.css`** - Keep only Tailwind directives:
    ```css
    @tailwind base;
    @tailwind components;
    @tailwind utilities;
    ```
 
-6. **Update `package.json`** - Remove redundant scripts, keep framework-specific ones:
+7. **Update `package.json`** - Remove redundant scripts, keep framework-specific ones:
    ```json
    {
      "name": "{{name}}",
@@ -223,7 +236,7 @@ pnpm create next-app@latest apps/{{name}} \
    }
    ```
 
-7. **Update `tsconfig.json`** - Extend base config:
+8. **Update `tsconfig.json`** - Extend base config:
    ```json
    {
      "extends": "../../tsconfig.base.json",
@@ -237,7 +250,7 @@ pnpm create next-app@latest apps/{{name}} \
    }
    ```
 
-8. **Create `moon.yml`**:
+9. **Create `moon.yml`**:
    ```yaml
    $schema: 'https://moonrepo.dev/schemas/project.json'
 
@@ -294,18 +307,29 @@ pnpm create expo-app@latest apps/{{name}} --template blank-typescript
 
 #### 5b. Post-processing
 
-1. **Remove unnecessary files**:
+1. **Merge `.gitignore` into root** - Before removing, consolidate scaffold gitignore entries:
+   ```bash
+   if [ -f apps/{{name}}/.gitignore ]; then
+     while IFS= read -r line || [ -n "$line" ]; do
+       if [ -n "$line" ] && ! grep -qxF "$line" .gitignore 2>/dev/null; then
+         echo "$line" >> .gitignore
+       fi
+     done < apps/{{name}}/.gitignore
+   fi
+   ```
+
+2. **Remove unnecessary files**:
    ```bash
    rm -f apps/{{name}}/.gitignore
    rm -f apps/{{name}}/README.md
    ```
 
-2. **Clean up `/assets` directory** - Remove default Expo assets:
+3. **Clean up `/assets` directory** - Remove default Expo assets:
    ```bash
    rm -f apps/{{name}}/assets/*.png
    ```
 
-3. **Simplify `App.tsx`** - Replace with minimal Hello World:
+4. **Simplify `App.tsx`** - Replace with minimal Hello World:
    ```tsx
    import { StyleSheet, Text, View } from "react-native";
 
@@ -330,7 +354,7 @@ pnpm create expo-app@latest apps/{{name}} --template blank-typescript
    });
    ```
 
-4. **Update `app.json`** - Clean configuration:
+5. **Update `app.json`** - Clean configuration:
    ```json
    {
      "expo": {
@@ -355,7 +379,7 @@ pnpm create expo-app@latest apps/{{name}} --template blank-typescript
    }
    ```
 
-5. **Update `package.json`** - Clean scripts:
+6. **Update `package.json`** - Clean scripts:
    ```json
    {
      "name": "{{name}}",
@@ -373,7 +397,7 @@ pnpm create expo-app@latest apps/{{name}} --template blank-typescript
    }
    ```
 
-6. **Create `moon.yml`**:
+7. **Create `moon.yml`**:
    ```yaml
    $schema: 'https://moonrepo.dev/schemas/project.json'
 
@@ -498,13 +522,24 @@ pnpm create hono@latest apps/{{name}} --template cloudflare-workers
 
 #### 5b. Post-processing
 
-1. **Remove unnecessary files**:
+1. **Merge `.gitignore` into root** - Before removing, consolidate scaffold gitignore entries:
+   ```bash
+   if [ -f apps/{{name}}/.gitignore ]; then
+     while IFS= read -r line || [ -n "$line" ]; do
+       if [ -n "$line" ] && ! grep -qxF "$line" .gitignore 2>/dev/null; then
+         echo "$line" >> .gitignore
+       fi
+     done < apps/{{name}}/.gitignore
+   fi
+   ```
+
+2. **Remove unnecessary files**:
    ```bash
    rm -f apps/{{name}}/.gitignore
    rm -f apps/{{name}}/README.md
    ```
 
-2. **Update `package.json`**:
+3. **Update `package.json`**:
    ```json
    {
      "name": "{{name}}",
@@ -519,7 +554,7 @@ pnpm create hono@latest apps/{{name}} --template cloudflare-workers
    }
    ```
 
-3. **Create `moon.yml`**:
+4. **Create `moon.yml`**:
    ```yaml
    $schema: 'https://moonrepo.dev/schemas/project.json'
 
@@ -575,7 +610,18 @@ pnpm dlx @nestjs/cli@latest new {{name}} \
 
 #### 5b. Post-processing
 
-1. **Remove unnecessary files**:
+1. **Merge `.gitignore` into root** - Before removing, consolidate scaffold gitignore entries:
+   ```bash
+   if [ -f apps/{{name}}/.gitignore ]; then
+     while IFS= read -r line || [ -n "$line" ]; do
+       if [ -n "$line" ] && ! grep -qxF "$line" .gitignore 2>/dev/null; then
+         echo "$line" >> .gitignore
+       fi
+     done < apps/{{name}}/.gitignore
+   fi
+   ```
+
+2. **Remove unnecessary files**:
    ```bash
    rm -f apps/{{name}}/.eslintrc.js
    rm -f apps/{{name}}/.prettierrc
@@ -583,7 +629,7 @@ pnpm dlx @nestjs/cli@latest new {{name}} \
    rm -f apps/{{name}}/.gitignore
    ```
 
-2. **Update `package.json`** - Clean scripts:
+3. **Update `package.json`** - Clean scripts:
    ```json
    {
      "name": "{{name}}",
@@ -602,7 +648,7 @@ pnpm dlx @nestjs/cli@latest new {{name}} \
    }
    ```
 
-3. **Create `moon.yml`**:
+4. **Create `moon.yml`**:
    ```yaml
    $schema: 'https://moonrepo.dev/schemas/project.json'
 
