@@ -1,0 +1,13 @@
+# FastAPI specific task overrides
+# Applied to projects with tag: 'fastapi'
+
+inheritedBy:
+  tags: ['fastapi']
+
+tasks:
+  dev:
+    command: 'uv run uvicorn $project.main:app --reload --port 8000'
+    local: true
+
+  start:
+    command: 'uv run uvicorn $project.main:app --port 8000'

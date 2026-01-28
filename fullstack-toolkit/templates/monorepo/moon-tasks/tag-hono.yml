@@ -1,0 +1,11 @@
+# Hono specific task overrides
+# Applied to projects with tag: 'hono'
+
+inheritedBy:
+  tags: ['hono']
+
+tasks:
+  deploy:
+    command: 'pnpm deploy'
+    deps:
+      - '~:build'

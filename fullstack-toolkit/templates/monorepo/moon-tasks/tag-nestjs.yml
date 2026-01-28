@@ -1,0 +1,16 @@
+# NestJS specific task overrides
+# Applied to projects with tag: 'nestjs'
+
+inheritedBy:
+  tags: ['nestjs']
+
+tasks:
+  build:
+    outputs:
+      - 'dist'
+
+  test-e2e:
+    command: 'pnpm test:e2e'
+    inputs:
+      - 'src/**/*'
+      - 'test/**/*'

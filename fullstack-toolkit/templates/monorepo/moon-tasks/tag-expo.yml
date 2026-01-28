@@ -1,0 +1,18 @@
+# Expo specific task overrides
+# Applied to projects with tag: 'expo'
+
+inheritedBy:
+  tags: ['expo']
+
+tasks:
+  android:
+    command: 'pnpm android'
+    local: true
+
+  ios:
+    command: 'pnpm ios'
+    local: true
+
+  web:
+    command: 'pnpm web'
+    local: true

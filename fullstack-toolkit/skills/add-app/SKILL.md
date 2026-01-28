@@ -250,47 +250,17 @@ pnpm create next-app@latest apps/{{name}} \
    }
    ```
 
-9. **Create `moon.yml`**:
+9. **Create `moon.yml`** (simplified - tasks inherited from `.moon/tasks/`):
    ```yaml
    $schema: 'https://moonrepo.dev/schemas/project.json'
 
    type: 'application'
    language: 'typescript'
-   platform: 'node'
-
-   tasks:
-     dev:
-       command: 'pnpm dev'
-       local: true
-
-     build:
-       command: 'pnpm build'
-       inputs:
-         - 'src/**/*'
-         - 'public/**/*'
-         - 'package.json'
-         - 'next.config.*'
-         - 'tailwind.config.*'
-         - 'tsconfig.json'
-       outputs:
-         - '.next'
-
-     start:
-       command: 'pnpm start'
-       deps:
-         - '~:build'
-
-     lint:
-       command: 'pnpm lint'
-       inputs:
-         - 'src/**/*'
-
-     typecheck:
-       command: 'pnpm typecheck'
-       inputs:
-         - 'src/**/*'
-         - 'tsconfig.json'
+   stack: 'frontend'
+   tags: ['frontend', 'next']
    ```
+
+   > Tasks (`dev`, `build`, `start`, `lint`, `typecheck`, `test`, `clean`) are automatically inherited from `.moon/tasks/typescript-app.yml` and `.moon/tasks/tag-next.yml`.
 
 **Default port:** 3000
 
@@ -396,40 +366,17 @@ pnpm create expo-app@latest apps/{{name}} --template blank-typescript
    }
    ```
 
-7. **Create `moon.yml`**:
+7. **Create `moon.yml`** (simplified - tasks inherited from `.moon/tasks/`):
    ```yaml
    $schema: 'https://moonrepo.dev/schemas/project.json'
 
    type: 'application'
    language: 'typescript'
-   platform: 'node'
-
-   tasks:
-     dev:
-       command: 'pnpm dev'
-       local: true
-
-     android:
-       command: 'pnpm android'
-       local: true
-
-     ios:
-       command: 'pnpm ios'
-       local: true
-
-     lint:
-       command: 'pnpm lint'
-       inputs:
-         - 'app/**/*'
-         - 'components/**/*'
-
-     typecheck:
-       command: 'pnpm typecheck'
-       inputs:
-         - 'app/**/*'
-         - 'components/**/*'
-         - 'tsconfig.json'
+   stack: 'frontend'
+   tags: ['mobile', 'expo']
    ```
+
+   > Tasks (`dev`, `android`, `ios`, `web`, `lint`, `typecheck`, `test`, `clean`) are automatically inherited from `.moon/tasks/typescript-app.yml` and `.moon/tasks/tag-expo.yml`.
 
 #### 5c. NativeWind Setup (if selected)
 
@@ -550,42 +497,17 @@ pnpm create hono@latest apps/{{name}} --template cloudflare-workers
    }
    ```
 
-4. **Create `moon.yml`**:
+4. **Create `moon.yml`** (simplified - tasks inherited from `.moon/tasks/`):
    ```yaml
    $schema: 'https://moonrepo.dev/schemas/project.json'
 
    type: 'application'
    language: 'typescript'
-   platform: 'node'
-
-   tasks:
-     dev:
-       command: 'pnpm dev'
-       local: true
-
-     build:
-       command: 'pnpm build'
-       inputs:
-         - 'src/**/*'
-         - 'package.json'
-         - 'wrangler.toml'
-
-     deploy:
-       command: 'pnpm deploy'
-       deps:
-         - '~:build'
-
-     lint:
-       command: 'pnpm lint'
-       inputs:
-         - 'src/**/*'
-
-     typecheck:
-       command: 'pnpm typecheck'
-       inputs:
-         - 'src/**/*'
-         - 'tsconfig.json'
+   stack: 'backend'
+   tags: ['backend', 'api', 'hono']
    ```
+
+   > Tasks (`dev`, `build`, `deploy`, `lint`, `typecheck`, `test`, `clean`) are automatically inherited from `.moon/tasks/typescript-app.yml` and `.moon/tasks/tag-hono.yml`.
 
 **Default port:** 8787
 
@@ -643,57 +565,17 @@ pnpm dlx @nestjs/cli@latest new {{name}} \
    }
    ```
 
-4. **Create `moon.yml`**:
+4. **Create `moon.yml`** (simplified - tasks inherited from `.moon/tasks/`):
    ```yaml
    $schema: 'https://moonrepo.dev/schemas/project.json'
 
    type: 'application'
    language: 'typescript'
-   platform: 'node'
-
-   tasks:
-     dev:
-       command: 'pnpm dev'
-       local: true
-
-     build:
-       command: 'pnpm build'
-       inputs:
-         - 'src/**/*'
-         - 'package.json'
-         - 'tsconfig*.json'
-         - 'nest-cli.json'
-       outputs:
-         - 'dist'
-
-     start:
-       command: 'pnpm start:prod'
-       deps:
-         - '~:build'
-
-     test:
-       command: 'pnpm test'
-       inputs:
-         - 'src/**/*'
-         - 'test/**/*'
-
-     test:e2e:
-       command: 'pnpm test:e2e'
-       inputs:
-         - 'src/**/*'
-         - 'test/**/*'
-
-     lint:
-       command: 'pnpm lint'
-       inputs:
-         - 'src/**/*'
-
-     typecheck:
-       command: 'pnpm typecheck'
-       inputs:
-         - 'src/**/*'
-         - 'tsconfig.json'
+   stack: 'backend'
+   tags: ['backend', 'api', 'nestjs']
    ```
+
+   > Tasks (`dev`, `build`, `start`, `test`, `test-e2e`, `lint`, `typecheck`, `clean`) are automatically inherited from `.moon/tasks/typescript-app.yml` and `.moon/tasks/tag-nestjs.yml`.
 
 **Default port:** 3000
 
@@ -777,49 +659,17 @@ uv init apps/{{name}} --lib
 
 4. **Create `tests/` directory with basic test**
 
-5. **Create `moon.yml`**:
+5. **Create `moon.yml`** (simplified - tasks inherited from `.moon/tasks/`):
    ```yaml
    $schema: 'https://moonrepo.dev/schemas/project.json'
 
    type: 'application'
    language: 'python'
-
-   tasks:
-     run:
-       command: 'uv run {{name}}'
-       local: true
-
-     build:
-       command: 'uv build'
-       inputs:
-         - 'src/**/*'
-         - 'pyproject.toml'
-       outputs:
-         - 'dist'
-
-     test:
-       command: 'uv run pytest'
-       inputs:
-         - 'src/**/*'
-         - 'tests/**/*'
-
-     lint:
-       command: 'uv run ruff check src tests'
-       inputs:
-         - 'src/**/*'
-         - 'tests/**/*'
-
-     format:
-       command: 'uv run ruff format src tests'
-
-     typecheck:
-       command: 'uv run mypy src'
-       inputs:
-         - 'src/**/*'
-
-     install:
-       command: 'uv sync'
+   stack: 'backend'
+   tags: ['backend', 'cli']
    ```
+
+   > Tasks (`dev`, `build`, `test`, `lint`, `format`, `format-check`, `typecheck`, `install`, `clean`) are automatically inherited from `.moon/tasks/python-app.yml`.
 
 ---
 
@@ -878,52 +728,17 @@ uv init apps/{{name}} --lib
        return {"message": "Welcome to {{name}}"}
    ```
 
-4. **Create `moon.yml`**:
+4. **Create `moon.yml`** (simplified - tasks inherited from `.moon/tasks/`):
    ```yaml
    $schema: 'https://moonrepo.dev/schemas/project.json'
 
    type: 'application'
    language: 'python'
-
-   tasks:
-     dev:
-       command: 'uv run uvicorn {{name}}.main:app --reload --port {{port}}'
-       local: true
-
-     start:
-       command: 'uv run uvicorn {{name}}.main:app --port {{port}}'
-
-     build:
-       command: 'uv build'
-       inputs:
-         - 'src/**/*'
-         - 'pyproject.toml'
-       outputs:
-         - 'dist'
-
-     test:
-       command: 'uv run pytest'
-       inputs:
-         - 'src/**/*'
-         - 'tests/**/*'
-
-     lint:
-       command: 'uv run ruff check src tests'
-       inputs:
-         - 'src/**/*'
-         - 'tests/**/*'
-
-     format:
-       command: 'uv run ruff format src tests'
-
-     typecheck:
-       command: 'uv run mypy src'
-       inputs:
-         - 'src/**/*'
-
-     install:
-       command: 'uv sync'
+   stack: 'backend'
+   tags: ['backend', 'api', 'fastapi']
    ```
+
+   > Tasks (`dev`, `start`, `build`, `test`, `lint`, `format`, `format-check`, `typecheck`, `install`, `clean`) are automatically inherited from `.moon/tasks/python-app.yml` and `.moon/tasks/tag-fastapi.yml`.
 
 **Default port:** 8000
 

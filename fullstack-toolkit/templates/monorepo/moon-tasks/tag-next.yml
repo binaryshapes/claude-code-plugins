@@ -1,0 +1,15 @@
+# Next.js specific task overrides
+# Applied to projects with tag: 'next'
+
+inheritedBy:
+  tags: ['next']
+
+tasks:
+  build:
+    outputs:
+      - '.next'
+
+  start:
+    command: 'pnpm start'
+    deps:
+      - '~:build'

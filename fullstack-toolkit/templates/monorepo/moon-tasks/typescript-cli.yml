@@ -1,0 +1,46 @@
+# TypeScript CLI Tool Tasks
+# Inherited by all TypeScript CLI tools
+
+extends: './_shared.yml'
+
+inheritedBy:
+  toolchains: ['typescript']
+  layers: ['tool']
+
+implicitInputs:
+  - 'package.json'
+
+tasks:
+  dev:
+    command: 'pnpm dev'
+    local: true
+
+  build:
+    command: 'pnpm build'
+    inputs:
+      - '@group(ts-sources)'
+      - '@group(ts-configs)'
+    outputs:
+      - 'dist'
+
+  lint:
+    command: 'pnpm lint'
+    inputs:
+      - '@group(ts-sources)'
+
+  typecheck:
+    command: 'pnpm typecheck'
+    inputs:
+      - '@group(ts-sources)'
+      - '@group(ts-configs)'
+
+  test:
+    command: 'pnpm test'
+    deps:
+      - '~:build'
+    inputs:
+      - '@group(ts-sources)'
+      - '@group(ts-tests)'
+
+  clean:
+    command: 'rm -rf dist node_modules/.cache'

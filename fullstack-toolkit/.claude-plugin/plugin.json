@@ -1,6 +1,6 @@
 {
   "name": "fullstack-toolkit",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Modular toolkit for fullstack applications based on TypeScript and Python using Moon monorepo and Prototools",
   "author": {
     "name": "Carlos Cosming",

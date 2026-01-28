@@ -1,0 +1,52 @@
+# Python Library Tasks
+# Inherited by all Python libraries
+
+extends: './_shared.yml'
+
+inheritedBy:
+  toolchains: ['python']
+  layers: ['library']
+
+implicitInputs:
+  - 'pyproject.toml'
+
+tasks:
+  build:
+    command: 'uv build'
+    inputs:
+      - '@group(py-sources)'
+      - '@group(py-configs)'
+    outputs:
+      - 'dist'
+
+  lint:
+    command: 'uv run ruff check src tests'
+    inputs:
+      - '@group(py-sources)'
+      - '@group(py-tests)'
+
+  format:
+    command: 'uv run ruff format src tests'
+
+  format-check:
+    command: 'uv run ruff format --check src tests'
+    inputs:
+      - '@group(py-sources)'
+      - '@group(py-tests)'
+
+  typecheck:
+    command: 'uv run mypy src'
+    inputs:
+      - '@group(py-sources)'
+
+  test:
+    command: 'uv run pytest'
+    inputs:
+      - '@group(py-sources)'
+      - '@group(py-tests)'
+
+  install:
+    command: 'uv sync'
+
+  clean:
+    command: 'rm -rf dist .pytest_cache .mypy_cache .ruff_cache __pycache__'

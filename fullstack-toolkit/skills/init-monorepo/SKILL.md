@@ -25,7 +25,20 @@ This skill creates a bare monorepo foundation without any language-specific tool
 ```
 {project}/
 ├── .moon/
-│   └── workspace.yml
+│   ├── workspace.yml
+│   └── tasks/
+│       ├── _shared.yml          # Shared fileGroups
+│       ├── typescript-app.yml   # TypeScript app tasks
+│       ├── typescript-lib.yml   # TypeScript lib tasks
+│       ├── typescript-cli.yml   # TypeScript CLI tasks
+│       ├── python-app.yml       # Python app tasks
+│       ├── python-lib.yml       # Python lib tasks
+│       ├── tag-next.yml         # Next.js overrides
+│       ├── tag-expo.yml         # Expo overrides
+│       ├── tag-hono.yml         # Hono overrides
+│       ├── tag-nestjs.yml       # NestJS overrides
+│       ├── tag-fastapi.yml      # FastAPI overrides
+│       └── tag-orpc.yml         # oRPC overrides
 ├── .prototools
 ├── .gitignore
 ├── .editorconfig
@@ -72,7 +85,7 @@ git init
 ### Step 4: Create Directory Structure
 
 ```bash
-mkdir -p apps packages tools .moon
+mkdir -p apps packages tools .moon/tasks
 ```
 
 ### Step 5: Copy Configuration Files from Templates
@@ -82,6 +95,18 @@ Copy the following files from `templates/monorepo/`:
 | Template File | Destination | Description |
 |---------------|-------------|-------------|
 | `moon-workspace.yml` | `.moon/workspace.yml` | Moon workspace configuration |
+| `moon-tasks/_shared.yml` | `.moon/tasks/_shared.yml` | Shared fileGroups |
+| `moon-tasks/typescript-app.yml` | `.moon/tasks/typescript-app.yml` | TypeScript app tasks |
+| `moon-tasks/typescript-lib.yml` | `.moon/tasks/typescript-lib.yml` | TypeScript lib tasks |
+| `moon-tasks/typescript-cli.yml` | `.moon/tasks/typescript-cli.yml` | TypeScript CLI tasks |
+| `moon-tasks/python-app.yml` | `.moon/tasks/python-app.yml` | Python app tasks |
+| `moon-tasks/python-lib.yml` | `.moon/tasks/python-lib.yml` | Python lib tasks |
+| `moon-tasks/tag-next.yml` | `.moon/tasks/tag-next.yml` | Next.js overrides |
+| `moon-tasks/tag-expo.yml` | `.moon/tasks/tag-expo.yml` | Expo overrides |
+| `moon-tasks/tag-hono.yml` | `.moon/tasks/tag-hono.yml` | Hono overrides |
+| `moon-tasks/tag-nestjs.yml` | `.moon/tasks/tag-nestjs.yml` | NestJS overrides |
+| `moon-tasks/tag-fastapi.yml` | `.moon/tasks/tag-fastapi.yml` | FastAPI overrides |
+| `moon-tasks/tag-orpc.yml` | `.moon/tasks/tag-orpc.yml` | oRPC overrides |
 | `prototools` | `.prototools` | Proto toolchain configuration |
 | `lefthook.yml` | `lefthook.yml` | Pre-commit hooks |
 | `gitignore` | `.gitignore` | Git ignore patterns |
@@ -142,11 +167,17 @@ Monorepo initialized successfully!
 
 Created:
   - .moon/workspace.yml
+  - .moon/tasks/ (centralized task definitions)
   - .prototools
   - .gitignore
   - .editorconfig
   - lefthook.yml
   - README.md
+
+Task inheritance configured for:
+  - TypeScript: apps, libraries, CLIs
+  - Python: apps, libraries
+  - Framework overrides: Next.js, Expo, Hono, NestJS, FastAPI
 
 Next steps:
   1. Add a project: /add-app

@@ -1,0 +1,58 @@
+# Shared file groups for task inheritance
+# These patterns are relative to each project's root
+
+fileGroups:
+  # TypeScript sources
+  ts-sources:
+    - 'src/**/*.{ts,tsx}'
+    - 'app/**/*.{ts,tsx}'
+    - 'components/**/*.{ts,tsx}'
+    - 'lib/**/*.{ts,tsx}'
+    - 'utils/**/*.{ts,tsx}'
+
+  # TypeScript tests
+  ts-tests:
+    - 'tests/**/*.{ts,tsx}'
+    - '**/*.test.{ts,tsx}'
+    - '**/*.spec.{ts,tsx}'
+    - '__tests__/**/*.{ts,tsx}'
+
+  # TypeScript configs
+  ts-configs:
+    - 'tsconfig.json'
+    - 'tsconfig.*.json'
+    - '*.config.{ts,js,mjs,cjs}'
+
+  # Python sources
+  py-sources:
+    - 'src/**/*.py'
+    - '**/*.py'
+    - '!tests/**/*.py'
+    - '!**/test_*.py'
+
+  # Python tests
+  py-tests:
+    - 'tests/**/*.py'
+    - '**/test_*.py'
+    - '**/*_test.py'
+
+  # Python configs
+  py-configs:
+    - 'pyproject.toml'
+    - 'ruff.toml'
+    - 'mypy.ini'
+    - 'setup.py'
+    - 'setup.cfg'
+
+  # Static assets
+  assets:
+    - 'public/**/*'
+    - 'assets/**/*'
+    - 'static/**/*'
+
+  # Package files
+  pkg-json:
+    - 'package.json'
+
+  pkg-python:
+    - 'pyproject.toml'

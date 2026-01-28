@@ -1,0 +1,10 @@
+# oRPC specific task overrides
+# Applied to projects with tag: 'orpc'
+
+inheritedBy:
+  tags: ['orpc']
+
+tasks:
+  build:
+    outputs:
+      - 'dist'

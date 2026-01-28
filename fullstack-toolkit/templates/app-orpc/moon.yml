@@ -2,41 +2,8 @@ $schema: 'https://moonrepo.dev/schemas/project.json'
 
 type: 'application'
 language: 'typescript'
-platform: 'node'
+stack: 'backend'
+tags: ['backend', 'api', 'orpc']
 
-tasks:
-  dev:
-    command: 'pnpm dev'
-    local: true
-
-  build:
-    command: 'pnpm build'
-    inputs:
-      - 'src/**/*'
-      - 'package.json'
-      - 'tsconfig.json'
-      - 'tsup.config.ts'
-    outputs:
-      - 'dist'
-
-  start:
-    command: 'pnpm start'
-    deps:
-      - '~:build'
-
-  test:
-    command: 'pnpm test'
-    inputs:
-      - 'src/**/*'
-      - '*.config.*'
-
-  lint:
-    command: 'pnpm lint'
-    inputs:
-      - 'src/**/*'
-
-  typecheck:
-    command: 'pnpm typecheck'
-    inputs:
-      - 'src/**/*'
-      - 'tsconfig.json'
+# Tasks (dev, build, start, test, lint, typecheck, clean) are automatically
+# inherited from .moon/tasks/typescript-app.yml and .moon/tasks/tag-orpc.yml
