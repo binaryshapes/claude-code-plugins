@@ -74,6 +74,14 @@ Prompt for the application name:
 - TypeScript: lowercase, kebab-case (e.g., `my-web-app`)
 - Python: lowercase, snake_case preferred (e.g., `my_api`)
 
+### Step 3b: Ask NativeWind (Expo only)
+
+**If the user selected `expo`**, ask about NativeWind support:
+
+"Would you like to add NativeWind (Tailwind CSS for React Native)?"
+- **Yes** - Add NativeWind with Tailwind CSS support
+- **No** - Use standard React Native StyleSheet
+
 ### Step 4: Auto-configure Toolchain
 
 The toolchain configuration is delegated to the `/toolchain` skill to ensure consistency and avoid duplication.
@@ -151,7 +159,55 @@ pnpm create next-app@latest apps/{{name}} \
    rm -f apps/{{name}}/.gitignore
    ```
 
-2. **Update `package.json`** - Remove redundant scripts, keep framework-specific ones:
+2. **Clean up `/public` directory** - Remove default Next.js assets:
+   ```bash
+   rm -f apps/{{name}}/public/*.svg
+   rm -f apps/{{name}}/public/*.ico
+   rm -f apps/{{name}}/public/*.png
+   ```
+
+3. **Simplify `src/app/page.tsx`** - Replace with minimal Hello World:
+   ```tsx
+   export default function Home() {
+     return (
+       <main className="flex min-h-screen items-center justify-center">
+         <h1 className="text-4xl font-bold">Hello, world!</h1>
+       </main>
+     );
+   }
+   ```
+
+4. **Simplify `src/app/layout.tsx`** - Clean metadata and remove font imports:
+   ```tsx
+   import type { Metadata } from "next";
+   import "./globals.css";
+
+   export const metadata: Metadata = {
+     title: "{{name}}",
+     description: "{{name}} application",
+   };
+
+   export default function RootLayout({
+     children,
+   }: Readonly<{
+     children: React.ReactNode;
+   }>) {
+     return (
+       <html lang="en">
+         <body>{children}</body>
+       </html>
+     );
+   }
+   ```
+
+5. **Simplify `src/app/globals.css`** - Keep only Tailwind directives:
+   ```css
+   @tailwind base;
+   @tailwind components;
+   @tailwind utilities;
+   ```
+
+6. **Update `package.json`** - Remove redundant scripts, keep framework-specific ones:
    ```json
    {
      "name": "{{name}}",
@@ -167,7 +223,7 @@ pnpm create next-app@latest apps/{{name}} \
    }
    ```
 
-3. **Update `tsconfig.json`** - Extend base config:
+7. **Update `tsconfig.json`** - Extend base config:
    ```json
    {
      "extends": "../../tsconfig.base.json",
@@ -181,7 +237,7 @@ pnpm create next-app@latest apps/{{name}} \
    }
    ```
 
-4. **Create `moon.yml`**:
+8. **Create `moon.yml`**:
    ```yaml
    $schema: 'https://moonrepo.dev/schemas/project.json'
 
@@ -244,7 +300,62 @@ pnpm create expo-app@latest apps/{{name}} --template blank-typescript
    rm -f apps/{{name}}/README.md
    ```
 
-2. **Update `package.json`** - Clean scripts:
+2. **Clean up `/assets` directory** - Remove default Expo assets:
+   ```bash
+   rm -f apps/{{name}}/assets/*.png
+   ```
+
+3. **Simplify `App.tsx`** - Replace with minimal Hello World:
+   ```tsx
+   import { StyleSheet, Text, View } from "react-native";
+
+   export default function App() {
+     return (
+       <View style={styles.container}>
+         <Text style={styles.title}>Hello, world!</Text>
+       </View>
+     );
+   }
+
+   const styles = StyleSheet.create({
+     container: {
+       flex: 1,
+       alignItems: "center",
+       justifyContent: "center",
+     },
+     title: {
+       fontSize: 32,
+       fontWeight: "bold",
+     },
+   });
+   ```
+
+4. **Update `app.json`** - Clean configuration:
+   ```json
+   {
+     "expo": {
+       "name": "{{name}}",
+       "slug": "{{name}}",
+       "version": "1.0.0",
+       "orientation": "portrait",
+       "userInterfaceStyle": "light",
+       "newArchEnabled": true,
+       "ios": {
+         "supportsTablet": true
+       },
+       "android": {
+         "adaptiveIcon": {
+           "backgroundColor": "#ffffff"
+         }
+       },
+       "web": {
+         "bundler": "metro"
+       }
+     }
+   }
+   ```
+
+5. **Update `package.json`** - Clean scripts:
    ```json
    {
      "name": "{{name}}",
@@ -262,7 +373,7 @@ pnpm create expo-app@latest apps/{{name}} --template blank-typescript
    }
    ```
 
-3. **Create `moon.yml`**:
+6. **Create `moon.yml`**:
    ```yaml
    $schema: 'https://moonrepo.dev/schemas/project.json'
 
@@ -298,6 +409,79 @@ pnpm create expo-app@latest apps/{{name}} --template blank-typescript
          - 'app/**/*'
          - 'components/**/*'
          - 'tsconfig.json'
+   ```
+
+#### 5c. NativeWind Setup (if selected)
+
+If the user opted for NativeWind support, perform these additional steps:
+
+1. **Install NativeWind dependencies**:
+   ```bash
+   cd apps/{{name}}
+   pnpm add nativewind react-native-reanimated react-native-safe-area-context
+   pnpm add -D tailwindcss@^3.4.17 prettier-plugin-tailwindcss
+   ```
+
+2. **Create `tailwind.config.js`**:
+   ```javascript
+   /** @type {import('tailwindcss').Config} */
+   module.exports = {
+     content: ["./App.tsx", "./components/**/*.{js,jsx,ts,tsx}"],
+     presets: [require("nativewind/preset")],
+     theme: {
+       extend: {},
+     },
+     plugins: [],
+   };
+   ```
+
+3. **Create `global.css`**:
+   ```css
+   @tailwind base;
+   @tailwind components;
+   @tailwind utilities;
+   ```
+
+4. **Update `babel.config.js`**:
+   ```javascript
+   module.exports = function (api) {
+     api.cache(true);
+     return {
+       presets: [
+         ["babel-preset-expo", { jsxImportSource: "nativewind" }],
+         "nativewind/babel",
+       ],
+     };
+   };
+   ```
+
+5. **Create `metro.config.js`**:
+   ```javascript
+   const { getDefaultConfig } = require("expo/metro-config");
+   const { withNativeWind } = require("nativewind/metro");
+
+   const config = getDefaultConfig(__dirname);
+
+   module.exports = withNativeWind(config, { input: "./global.css" });
+   ```
+
+6. **Create `nativewind-env.d.ts`** (TypeScript support):
+   ```typescript
+   /// <reference types="nativewind/types" />
+   ```
+
+7. **Replace `App.tsx`** with NativeWind version:
+   ```tsx
+   import "./global.css";
+   import { Text, View } from "react-native";
+
+   export default function App() {
+     return (
+       <View className="flex-1 items-center justify-center">
+         <Text className="text-3xl font-bold">Hello, world!</Text>
+       </View>
+     );
+   }
    ```
 
 ---
