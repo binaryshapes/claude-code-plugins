@@ -62,6 +62,31 @@ Ensure the appropriate toolchain is configured (same as `/add-app`).
 
 ## Step 5: Scaffold CLI
 
+### TypeScript CLI - Template
+
+#### 5a. Copy Template
+
+Copy the template from `templates/cli-ts/`:
+
+```bash
+cp -r templates/cli-ts/ tools/{{name}}/
+```
+
+#### 5b. Post-processing
+
+1. Replace placeholders in all files:
+   - `{{name}}` → CLI project name
+   - `{{bin}}` → Binary/command name
+   - `{{scope}}` → Package scope (from monorepo config)
+
+2. Files to update with placeholders:
+   - `package.json` - name, bin field
+   - `src/cli.ts` - command name
+   - `src/commands/hello.ts` - if needed
+   - `tests/cli.test.ts` - command references
+
+---
+
 ### Python CLI - Official CLI + Post-processing
 
 #### 5a. Run Official CLI
@@ -184,7 +209,7 @@ uv init tools/{{name}} --lib
        console.print(f"[red]✗[/red] {message}")
    ```
 
-7. **Create `tests/` directory**:
+7. **Create tests**:
    ```bash
    mkdir -p tools/{{name}}/tests
    touch tools/{{name}}/tests/__init__.py
@@ -315,230 +340,6 @@ uv init tools/{{name}} --lib
 
 ---
 
-### TypeScript CLI - Template
-
-#### 5a. Copy Template
-
-```bash
-cp -r templates/cli-ts/ tools/{{name}}/
-```
-
-> Note: If no CLI template exists, create the structure manually.
-
-#### 5b. Create Structure (if no template)
-
-```
-tools/{{name}}/
-├── src/
-│   ├── index.ts
-│   ├── cli.ts
-│   ├── commands/
-│   │   └── hello.ts
-│   └── utils/
-│       └── logger.ts
-├── tests/
-│   └── cli.test.ts
-├── moon.yml
-├── package.json
-├── tsconfig.json
-└── tsup.config.ts
-```
-
-#### 5c. Create Files
-
-1. **Create `package.json`**:
-   ```json
-   {
-     "name": "@{{scope}}/{{name}}",
-     "version": "0.0.0",
-     "type": "module",
-     "bin": {
-       "{{bin}}": "./dist/index.js"
-     },
-     "files": ["dist"],
-     "scripts": {
-       "build": "tsup",
-       "dev": "tsup --watch",
-       "start": "node dist/index.js",
-       "test": "vitest run",
-       "typecheck": "tsc --noEmit",
-       "lint": "eslint src",
-       "clean": "rm -rf dist"
-     },
-     "dependencies": {
-       "commander": "^12.0.0",
-       "chalk": "^5.0.0"
-     },
-     "devDependencies": {
-       "@types/node": "^22.0.0",
-       "tsup": "^8.0.0",
-       "typescript": "^5.7.0",
-       "vitest": "^2.0.0"
-     }
-   }
-   ```
-
-2. **Create `tsup.config.ts`**:
-   ```typescript
-   import { defineConfig } from 'tsup';
-
-   export default defineConfig({
-     entry: ['src/index.ts'],
-     format: ['esm'],
-     dts: false,
-     splitting: false,
-     sourcemap: true,
-     clean: true,
-     minify: true,
-     banner: {
-       js: '#!/usr/bin/env node',
-     },
-   });
-   ```
-
-3. **Create `tsconfig.json`**:
-   ```json
-   {
-     "extends": "../../tsconfig.base.json",
-     "compilerOptions": {
-       "outDir": "./dist",
-       "rootDir": "./src",
-       "baseUrl": ".",
-       "paths": {
-         "@/*": ["./src/*"]
-       }
-     },
-     "include": ["src"],
-     "exclude": ["node_modules", "dist"]
-   }
-   ```
-
-4. **Create `src/index.ts`**:
-   ```typescript
-   import { cli } from './cli';
-
-   cli.parse(process.argv);
-   ```
-
-5. **Create `src/cli.ts`**:
-   ```typescript
-   import { Command } from 'commander';
-   import { hello } from './commands/hello';
-
-   export const cli = new Command()
-     .name('{{bin}}')
-     .description('{{name}} CLI tool')
-     .version('0.0.0');
-
-   // Register commands
-   cli.addCommand(hello);
-   ```
-
-6. **Create `src/commands/hello.ts`**:
-   ```typescript
-   import { Command } from 'commander';
-   import chalk from 'chalk';
-
-   export const hello = new Command('hello')
-     .description('Say hello')
-     .argument('[name]', 'Name to greet', 'World')
-     .option('-l, --loud', 'Shout the greeting')
-     .action((name: string, options: { loud?: boolean }) => {
-       const greeting = `Hello, ${name}!`;
-       console.log(options.loud ? chalk.bold.green(greeting.toUpperCase()) : greeting);
-     });
-   ```
-
-7. **Create `src/utils/logger.ts`**:
-   ```typescript
-   import chalk from 'chalk';
-
-   export const logger = {
-     info: (message: string) => console.log(chalk.blue('i'), message),
-     success: (message: string) => console.log(chalk.green('✓'), message),
-     warn: (message: string) => console.log(chalk.yellow('⚠'), message),
-     error: (message: string) => console.error(chalk.red('✗'), message),
-   };
-   ```
-
-8. **Create `tests/cli.test.ts`**:
-   ```typescript
-   import { describe, it, expect } from 'vitest';
-   import { execSync } from 'child_process';
-
-   describe('CLI', () => {
-     it('should show help', () => {
-       const output = execSync('node dist/index.js --help', {
-         encoding: 'utf-8',
-       });
-       expect(output).toContain('{{name}} CLI tool');
-     });
-
-     it('should run hello command', () => {
-       const output = execSync('node dist/index.js hello', {
-         encoding: 'utf-8',
-       });
-       expect(output).toContain('Hello, World!');
-     });
-
-     it('should greet by name', () => {
-       const output = execSync('node dist/index.js hello Claude', {
-         encoding: 'utf-8',
-       });
-       expect(output).toContain('Hello, Claude!');
-     });
-   });
-   ```
-
-9. **Create `moon.yml`**:
-   ```yaml
-   $schema: 'https://moonrepo.dev/schemas/project.json'
-
-   type: 'tool'
-   language: 'typescript'
-   platform: 'node'
-
-   tasks:
-     build:
-       command: 'pnpm build'
-       inputs:
-         - 'src/**/*'
-         - 'package.json'
-         - 'tsconfig.json'
-         - 'tsup.config.ts'
-       outputs:
-         - 'dist'
-
-     dev:
-       command: 'pnpm dev'
-       local: true
-       persistent: true
-
-     test:
-       command: 'pnpm test'
-       deps:
-         - '~:build'
-       inputs:
-         - 'src/**/*'
-         - 'tests/**/*'
-
-     lint:
-       command: 'pnpm lint'
-       inputs:
-         - 'src/**/*'
-
-     typecheck:
-       command: 'pnpm typecheck'
-       inputs:
-         - 'src/**/*'
-         - 'tsconfig.json'
-
-     clean:
-       command: 'pnpm clean'
-   ```
-
----
-
 ## Step 6: Install Dependencies
 
 **TypeScript:**
@@ -591,107 +392,10 @@ To install globally:
 
 ---
 
-## Adding More Commands
-
-### TypeScript
-
-1. Create `src/commands/new-command.ts`:
-   ```typescript
-   import { Command } from 'commander';
-
-   export const newCommand = new Command('new-command')
-     .description('Description here')
-     .action(() => {
-       // Implementation
-     });
-   ```
-
-2. Register in `src/cli.ts`:
-   ```typescript
-   import { newCommand } from './commands/new-command';
-   cli.addCommand(newCommand);
-   ```
-
-### Python
-
-1. Create `src/{{name}}/commands/new_command.py`:
-   ```python
-   import typer
-
-
-   def new_command(
-       arg: str = typer.Argument(..., help="Required argument"),
-       flag: bool = typer.Option(False, "--flag", "-f", help="Optional flag"),
-   ) -> None:
-       """Description of the command."""
-       # Implementation
-   ```
-
-2. Register in `src/{{name}}/cli.py`:
-   ```python
-   from {{name}}.commands.new_command import new_command
-   app.command()(new_command)
-   ```
-
----
-
-## Common CLI Patterns
-
-### Subcommands (TypeScript)
-```typescript
-export const config = new Command('config')
-  .description('Manage configuration');
-
-config
-  .command('get <key>')
-  .description('Get config value')
-  .action((key) => { /* ... */ });
-
-config
-  .command('set <key> <value>')
-  .description('Set config value')
-  .action((key, value) => { /* ... */ });
-```
-
-### Subcommands (Python)
-```python
-config_app = typer.Typer(help="Configuration commands")
-app.add_typer(config_app, name="config")
-
-@config_app.command()
-def get(key: str) -> None:
-    """Get config value."""
-    ...
-
-@config_app.command()
-def set(key: str, value: str) -> None:
-    """Set config value."""
-    ...
-```
-
-### Progress Indicators (TypeScript)
-```typescript
-import ora from 'ora';
-
-const spinner = ora('Loading...').start();
-// ... do work
-spinner.succeed('Done!');
-```
-
-### Progress Indicators (Python)
-```python
-from rich.progress import track
-
-for item in track(items, description="Processing..."):
-    process(item)
-```
-
----
-
 ## Important Notes
 
 - **Python CLIs**: Use `uv init` + add Typer/Rich for latest packaging
-- **TypeScript CLIs**: Use templates with Commander.js (no official scaffolder)
+- **TypeScript CLIs**: Use template from `templates/cli-ts/` (no official scaffolder)
 - CLI tools are placed in `tools/` directory
 - TypeScript CLIs are compiled with tsup and include shebang
 - Python CLIs can be run directly with `uv run` or installed globally

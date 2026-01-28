@@ -1,6 +1,3 @@
-# Lefthook pre-commit hooks
-# Language-specific hooks will be added by /ts-add-app, /py-add-app, etc.
-
 pre-commit:
   parallel: true
   commands: {}

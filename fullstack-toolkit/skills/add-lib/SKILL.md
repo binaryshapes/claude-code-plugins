@@ -205,44 +205,12 @@ import { Button } from '@scope/ui/native';
 
 #### 5e. Post-processing
 
-1. Replace `{{name}}` and `{{scope}}` placeholders
+1. Replace `{{name}}` and `{{scope}}` placeholders in all files:
+   - `package.json` - name, scope
+   - `tsconfig.json` - if needed
+   - `tailwind.config.ts` - if needed
 
-2. **Create `moon.yml`**:
-   ```yaml
-   $schema: 'https://moonrepo.dev/schemas/project.json'
-
-   type: 'library'
-   language: 'typescript'
-   platform: 'node'
-
-   tasks:
-     build:
-       command: 'pnpm build'
-       inputs:
-         - 'src/**/*'
-         - 'package.json'
-         - 'tsconfig.json'
-         - 'tsup.config.ts'
-         - 'tailwind.config.ts'
-       outputs:
-         - 'dist'
-
-     dev:
-       command: 'pnpm dev'
-       local: true
-       persistent: true
-
-     lint:
-       command: 'pnpm lint'
-       inputs:
-         - 'src/**/*'
-
-     typecheck:
-       command: 'pnpm typecheck'
-       inputs:
-         - 'src/**/*'
-         - 'tsconfig.json'
-   ```
+2. The template already includes `moon.yml` with all necessary tasks (build, dev, lint, typecheck)
 
 ---
 
