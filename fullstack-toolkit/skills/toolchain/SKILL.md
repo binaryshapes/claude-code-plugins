@@ -64,15 +64,25 @@ Add a new tool to the toolchain.
 **Arguments:**
 
 - `tool`: Tool name (node, pnpm, python, uv, bun, deno, go, rust, etc.)
-- `version` (optional): Specific version, "lts" for LTS version, or omit for LTS default
+- `version` (optional): Specific version or omit to use LTS/latest
+
+**Default versions (always use LTS when available):**
+
+| Tool | Default Version |
+|------|-----------------|
+| `node` | `lts` |
+| `pnpm` | `lts` |
+| `python` | `lts` |
+| `uv` | `lts` |
+| `bun` | `lts` |
+| `deno` | `lts` |
 
 **Examples:**
 
 ```
 /toolchain add node          # Add Node.js LTS
-/toolchain add node lts      # Add Node.js LTS
-/toolchain add python 3.14   # Add Python 3.14
-/toolchain add bun 1.2.0     # Add specific Bun version
+/toolchain add pnpm          # Add pnpm LTS
+/toolchain add python 3.12   # Add specific Python version
 ```
 
 ---
@@ -183,12 +193,17 @@ proto list
 
 ### For `/toolchain add <tool> [version]`
 
+> **IMPORTANT:** You MUST use the `proto pin` command to add tools. NEVER write directly to the `.prototools` file. The `proto pin` command handles version resolution and file updates correctly.
+
 1. Validate the tool name is supported by Proto
-2. If version not specified, use "lts"
+2. Determine the version to use:
+   - If version specified by user, use that version
+   - If no version specified, **always use `lts`** for these tools: `node`, `pnpm`, `python`, `uv`, `bun`, `deno`
+   - For other tools, use `latest`
 3. Pin the tool:
 
 ```bash
-proto pin <tool> <version>
+proto pin <tool> lts   # Always prefer lts for node, pnpm, python, uv, bun, deno
 ```
 
 4. Install the tool:
@@ -197,10 +212,10 @@ proto pin <tool> <version>
 proto install <tool>
 ```
 
-5. Verify installation:
+5. Verify installation with proto status:
 
 ```bash
-proto run <tool> -- --version
+proto status
 ```
 
 ---
@@ -218,6 +233,8 @@ proto upgrade <tool>   # or just: proto upgrade
 ---
 
 ### For `/toolchain pin <tool> <version>`
+
+> **IMPORTANT:** You MUST use the `proto pin` command to pin versions. NEVER write directly to the `.prototools` file. The `proto pin` command handles version resolution and file updates correctly.
 
 1. Validate the version exists:
 
@@ -237,7 +254,13 @@ proto pin <tool> <version>
 proto install <tool>
 ```
 
-4. Run `/toolchain sync` to update package.json
+4. Verify installation:
+
+```bash
+proto status
+```
+
+5. Run `/toolchain sync` to update package.json
 
 ---
 
@@ -249,9 +272,11 @@ proto install <tool>
 grep -q "node" .prototools 2>/dev/null
 ```
 
-If node is already in `.prototools`, skip to step 6.
+If node is already in `.prototools`, skip to step 8.
 
 2. **Add Node.js and pnpm via Proto:**
+
+> **IMPORTANT:** You MUST use the `proto pin` command to add tools. NEVER write directly to the `.prototools` file. The `proto pin` command handles version resolution and file updates correctly.
 
 ```bash
 proto pin node lts
@@ -260,7 +285,15 @@ proto install node
 proto install pnpm
 ```
 
-3. **Read the pinned versions from `.prototools`:**
+3. **Verify installation with proto status:**
+
+```bash
+proto status
+```
+
+This will show all configured tools and their versions. Verify that node and pnpm are listed correctly.
+
+4. **Read the pinned versions from `.prototools`:**
 
 ```bash
 # Parse TOML to get exact versions
@@ -268,7 +301,7 @@ NODE_VERSION=$(grep '^node' .prototools | sed 's/.*= *"//' | sed 's/".*//')
 PNPM_VERSION=$(grep '^pnpm' .prototools | sed 's/.*= *"//' | sed 's/".*//')
 ```
 
-4. **Create root `package.json`** with dynamic versions:
+5. **Create root `package.json`** with dynamic versions:
 
 ```json
 {
@@ -308,16 +341,16 @@ PNPM_VERSION=$(grep '^pnpm' .prototools | sed 's/.*= *"//' | sed 's/".*//')
 }
 ```
 
-Replace `<NODE_VERSION>` and `<PNPM_VERSION>` with the actual values from step 3.
+Replace `<NODE_VERSION>` and `<PNPM_VERSION>` with the actual values from step 4.
 
-5. **Copy config files from `templates/toolchain-ts/`:**
+6. **Copy config files from `templates/toolchain-ts/`:**
 
 - `tsconfig.base.json`
 - `eslint.config.js`
 - `prettier.config.js`
 - `vitest.config.ts`
 
-6. **Add TypeScript hooks to `lefthook.yml`:**
+7. **Add TypeScript hooks to `lefthook.yml`:**
 
 ```yaml
 pre-commit:
@@ -333,7 +366,7 @@ pre-commit:
       run: pnpm typecheck
 ```
 
-7. **Install dependencies:**
+8. **Install dependencies:**
 
 ```bash
 proto use
@@ -350,9 +383,11 @@ pnpm install
 grep -q "python" .prototools 2>/dev/null
 ```
 
-If python is already in `.prototools`, skip to step 4.
+If python is already in `.prototools`, skip to step 5.
 
 2. **Add Python and uv via Proto:**
+
+> **IMPORTANT:** You MUST use the `proto pin` command to add tools. NEVER write directly to the `.prototools` file. The `proto pin` command handles version resolution and file updates correctly.
 
 ```bash
 proto pin python lts
@@ -361,12 +396,20 @@ proto install python
 proto install uv
 ```
 
-3. **Copy config files from `templates/toolchain-py/`:**
+3. **Verify installation with proto status:**
+
+```bash
+proto status
+```
+
+This will show all configured tools and their versions. Verify that python and uv are listed correctly.
+
+4. **Copy config files from `templates/toolchain-py/`:**
 
 - `ruff.toml`
 - `mypy.ini`
 
-4. **Add Python hooks to `lefthook.yml`:**
+5. **Add Python hooks to `lefthook.yml`:**
 
 ```yaml
 pre-commit:
@@ -383,7 +426,7 @@ pre-commit:
       run: uv run mypy {staged_files}
 ```
 
-5. **Install toolchain:**
+6. **Install toolchain:**
 
 ```bash
 proto use

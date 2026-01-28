@@ -1,6 +1,3 @@
-# Proto toolchain configuration
-# Languages will be auto-added when you use /ts-add-app or /py-add-app
-
 [settings]
 auto-install = true
 auto-clean = true
