@@ -123,15 +123,24 @@ See `/toolchain setup-python` for full details.
 
 ```bash
 pnpm create next-app@latest apps/{{name}} \
+  --yes \
   --typescript \
   --tailwind \
   --eslint \
   --app \
   --src-dir \
-  --no-git \
+  --turbopack \
+  --disable-git \
   --use-pnpm \
   --import-alias "@/*"
 ```
+
+**Important flags:**
+- `--yes` - Use defaults for all options (required for non-interactive mode)
+- `--disable-git` - Skip git initialization (monorepo already has git)
+- `--turbopack` - Enable Turbopack (default in recent versions)
+- `--tailwind` - Include Tailwind CSS (default in recent versions)
+- `--typescript` - TypeScript project (default in recent versions)
 
 #### 5b. Post-processing
 
