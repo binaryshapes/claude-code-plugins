@@ -58,6 +58,24 @@ Prompt for the binary/command name:
 
 Ensure the appropriate toolchain is configured (same as `/add-app`).
 
+### Step 4b: Copy Task Definitions (Lazy Loading)
+
+Task definitions are copied from `templates/monorepo/moon-tasks/` to `.moon/tasks/` only when needed.
+
+```bash
+mkdir -p .moon/tasks
+```
+
+**For TypeScript CLIs:**
+```bash
+[ ! -f .moon/tasks/typescript-cli.yml ] && cp templates/monorepo/moon-tasks/typescript-cli.yml .moon/tasks/
+```
+
+**For Python CLIs** (uses python-app.yml):
+```bash
+[ ! -f .moon/tasks/python-app.yml ] && cp templates/monorepo/moon-tasks/python-app.yml .moon/tasks/
+```
+
 ---
 
 ## Step 5: Scaffold CLI
@@ -295,7 +313,7 @@ uv init tools/{{name}} --lib
     ```yaml
     $schema: 'https://moonrepo.dev/schemas/project.json'
 
-    type: 'tool'
+    layer: 'tool'
     language: 'python'
 
     tasks:

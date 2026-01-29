@@ -9,7 +9,7 @@ Initialize a language-agnostic Moon + Proto monorepo.
 
 ## Description
 
-This skill creates a bare monorepo foundation using Moon as the build system and Proto as the toolchain manager. Languages are auto-detected and configured when you add the first project of that type using `/add-app`, `/add-lib`, or `/add-cli`.
+This skill creates a bare monorepo foundation using Moon as the build system and Proto as the toolchain manager. Language toolchains and task definitions are added automatically when you create your first project using `/add-app`, `/add-lib`, or `/add-cli`.
 
 ## Usage
 
@@ -26,29 +26,22 @@ This skill creates a bare monorepo foundation using Moon as the build system and
 {project}/
 ├── .moon/
 │   ├── workspace.yml          # Moon workspace configuration
-│   ├── toolchains.yml          # Moon toolchain configuration
-│   └── tasks/                 # Centralized task definitions
-│       ├── _shared.yml          # Shared fileGroups
-│       ├── typescript-app.yml   # TypeScript app tasks
-│       ├── typescript-lib.yml   # TypeScript lib tasks
-│       ├── typescript-cli.yml   # TypeScript CLI tasks
-│       ├── python-app.yml       # Python app tasks
-│       ├── python-lib.yml       # Python lib tasks
-│       ├── tag-next.yml         # Next.js overrides
-│       ├── tag-expo.yml         # Expo overrides
-│       ├── tag-hono.yml         # Hono overrides
-│       ├── tag-nestjs.yml       # NestJS overrides
-│       ├── tag-fastapi.yml      # FastAPI overrides
-│       └── tag-orpc.yml         # oRPC overrides
-├── .prototools                # Proto toolchain versions (moon pinned)
+│   └── toolchains.yml         # Moon toolchain configuration (empty)
+├── .prototools                # Proto settings + moon version pinned
 ├── .gitignore
 ├── .editorconfig
 ├── lefthook.yml
-├── apps/
-├── packages/
-├── tools/
+├── apps/                      # Application projects
+├── packages/                  # Shared libraries
+├── tools/                     # CLI tools
 └── README.md
 ```
+
+**Note:** The `.moon/tasks/` directory is created lazily when you add your first project. Task definitions are copied based on project type:
+- First TypeScript app → `typescript-app.yml`
+- First Python app → `python-app.yml`
+- Using Next.js → `tag-next.yml`
+- etc.
 
 ## Instructions
 
@@ -86,7 +79,7 @@ git init
 ### Step 4: Create Directory Structure
 
 ```bash
-mkdir -p apps packages tools .moon/tasks
+mkdir -p apps packages tools .moon
 ```
 
 ### Step 5: Copy Configuration Files from Templates
@@ -97,22 +90,12 @@ Copy the following files from `templates/monorepo/`:
 |---------------|-------------|-------------|
 | `moon-workspace.yml` | `.moon/workspace.yml` | Moon workspace configuration |
 | `moon-toolchains.yml` | `.moon/toolchains.yml` | Moon toolchain configuration |
-| `moon-tasks/_shared.yml` | `.moon/tasks/_shared.yml` | Shared fileGroups |
-| `moon-tasks/typescript-app.yml` | `.moon/tasks/typescript-app.yml` | TypeScript app tasks |
-| `moon-tasks/typescript-lib.yml` | `.moon/tasks/typescript-lib.yml` | TypeScript lib tasks |
-| `moon-tasks/typescript-cli.yml` | `.moon/tasks/typescript-cli.yml` | TypeScript CLI tasks |
-| `moon-tasks/python-app.yml` | `.moon/tasks/python-app.yml` | Python app tasks |
-| `moon-tasks/python-lib.yml` | `.moon/tasks/python-lib.yml` | Python lib tasks |
-| `moon-tasks/tag-next.yml` | `.moon/tasks/tag-next.yml` | Next.js overrides |
-| `moon-tasks/tag-expo.yml` | `.moon/tasks/tag-expo.yml` | Expo overrides |
-| `moon-tasks/tag-hono.yml` | `.moon/tasks/tag-hono.yml` | Hono overrides |
-| `moon-tasks/tag-nestjs.yml` | `.moon/tasks/tag-nestjs.yml` | NestJS overrides |
-| `moon-tasks/tag-fastapi.yml` | `.moon/tasks/tag-fastapi.yml` | FastAPI overrides |
-| `moon-tasks/tag-orpc.yml` | `.moon/tasks/tag-orpc.yml` | oRPC overrides |
 | `prototools` | `.prototools` | Proto settings (auto-install, auto-clean) |
 | `lefthook.yml` | `lefthook.yml` | Pre-commit hooks |
 | `gitignore` | `.gitignore` | Git ignore patterns |
 | `editorconfig` | `.editorconfig` | Editor configuration |
+
+**Important:** Do NOT copy the `moon-tasks/` directory. Task definitions are added lazily by `/add-app`, `/add-lib`, and `/add-cli` when projects are created.
 
 ### Step 6: Pin Moon Version with Proto
 
@@ -224,8 +207,7 @@ Monorepo initialized successfully!
 
 Created:
   - .moon/workspace.yml      (workspace configuration)
-  - .moon/toolchains.yml      (toolchain configuration)
-  - .moon/tasks/             (centralized task definitions)
+  - .moon/toolchains.yml     (toolchain configuration)
   - .prototools              (pinned tool versions)
   - .gitignore
   - .editorconfig
@@ -234,69 +216,38 @@ Created:
 
 Moon version pinned: <version from proto pin>
 
-Task inheritance configured for:
-  - TypeScript: apps, libraries, CLIs
-  - Python: apps, libraries
-  - Framework overrides: Next.js, Expo, Hono, NestJS, FastAPI, oRPC
-
 Next steps:
   1. Add your first project: /add-app
   2. Configure hooks: /hooks
-  3. Setup language toolchain: /toolchain
 ```
 
 ---
 
-## Toolchain Integration
+## Lazy Task Loading
 
-### How It Works
+Task definitions are NOT created during init. They are added when projects are created:
 
-1. **Proto** manages tool versions via `.prototools`
-2. **Moon** uses Proto for automatic tool installation via `.moon/toolchains.yml`
-3. When you run `moon run :task`, Moon ensures correct tool versions are used
+| When you create... | Tasks copied |
+|-------------------|--------------|
+| TypeScript app | `typescript-app.yml` |
+| TypeScript library | `typescript-lib.yml` |
+| TypeScript CLI | `typescript-cli.yml` |
+| Python app | `python-app.yml` |
+| Python library | `python-lib.yml` |
+| Next.js app | `tag-next.yml` |
+| Expo app | `tag-expo.yml` |
+| Hono app | `tag-hono.yml` |
+| NestJS app | `tag-nestjs.yml` |
+| FastAPI app | `tag-fastapi.yml` |
+| oRPC app | `tag-orpc.yml` |
 
-### Adding Language Toolchains
-
-When you add your first TypeScript or Python project, use `/toolchain` to configure:
-
-**TypeScript:**
-```bash
-/toolchain setup-typescript
-```
-
-This will:
-- Pin `node` and `pnpm` versions in `.prototools`
-- Configure `.moon/toolchains.yml` for Node.js
-- Create `package.json` with pnpm workspaces
-- Run `proto use` to install tools
-- Run `pnpm install` to install dependencies
-
-**Python:**
-```bash
-/toolchain setup-python
-```
-
-This will:
-- Pin `python` and `uv` versions in `.prototools`
-- Configure `.moon/toolchains.yml` for Python
-- Run `proto use` to install tools
-
-### Ensuring Package Manager Usage
-
-After adding a project with `/add-app`, `/add-lib`, or `/add-cli`:
-
-1. The skill invokes `/toolchain setup-<language>` if not already configured
-2. Toolchain runs `proto use` to ensure tools are installed
-3. For TypeScript: runs `pnpm install` to install dependencies
-4. For Python: runs `uv sync` in the project directory
-
-This ensures dependencies are always installed after scaffolding.
+This keeps the monorepo clean and only includes what you actually use.
 
 ---
 
 ## Important Notes
 
 - **Moon is pinned** in `.prototools` for consistent builds
+- **No task files initially** - added when first project of each type is created
 - **Language toolchains are lazy** - only configured when first needed
-- **Task inheritance** - projects inherit tasks from `.moon/tasks/` based on type/language/tags
 - **No lock-in** - standard Moon/Proto setup, no plugin-specific modifications

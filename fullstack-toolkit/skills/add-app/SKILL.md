@@ -121,6 +121,50 @@ If not configured, invoke `/toolchain setup-python`. This will:
 
 See `/toolchain setup-python` for full details.
 
+### Step 4b: Copy Task Definitions (Lazy Loading)
+
+Task definitions are copied from `templates/monorepo/moon-tasks/` to `.moon/tasks/` only when needed.
+
+#### Create tasks directory if it doesn't exist:
+
+```bash
+mkdir -p .moon/tasks
+```
+
+#### For TypeScript Applications:
+
+Check and copy if not exists:
+
+```bash
+# Copy typescript-app.yml if not exists
+[ ! -f .moon/tasks/typescript-app.yml ] && cp templates/monorepo/moon-tasks/typescript-app.yml .moon/tasks/
+```
+
+#### For Python Applications:
+
+```bash
+# Copy python-app.yml if not exists
+[ ! -f .moon/tasks/python-app.yml ] && cp templates/monorepo/moon-tasks/python-app.yml .moon/tasks/
+```
+
+#### For Framework-Specific Tags:
+
+Based on the application type, also copy the tag file:
+
+| App Type | Tag File |
+|----------|----------|
+| `next` | `tag-next.yml` |
+| `expo` | `tag-expo.yml` |
+| `hono` | `tag-hono.yml` |
+| `nestjs` | `tag-nestjs.yml` |
+| `orpc` | `tag-orpc.yml` |
+| `fastapi` | `tag-fastapi.yml` |
+
+Example for Next.js:
+```bash
+[ ! -f .moon/tasks/tag-next.yml ] && cp templates/monorepo/moon-tasks/tag-next.yml .moon/tasks/
+```
+
 ---
 
 ## Step 5: Scaffold Application (Official CLI + Post-processing)
@@ -254,7 +298,7 @@ pnpm create next-app@latest apps/{{name}} \
    ```yaml
    $schema: 'https://moonrepo.dev/schemas/project.json'
 
-   type: 'application'
+   layer: 'application'
    language: 'typescript'
    stack: 'frontend'
    tags: ['frontend', 'next']
@@ -370,7 +414,7 @@ pnpm create expo-app@latest apps/{{name}} --template blank-typescript
    ```yaml
    $schema: 'https://moonrepo.dev/schemas/project.json'
 
-   type: 'application'
+   layer: 'application'
    language: 'typescript'
    stack: 'frontend'
    tags: ['mobile', 'expo']
@@ -501,7 +545,7 @@ pnpm create hono@latest apps/{{name}} --template cloudflare-workers
    ```yaml
    $schema: 'https://moonrepo.dev/schemas/project.json'
 
-   type: 'application'
+   layer: 'application'
    language: 'typescript'
    stack: 'backend'
    tags: ['backend', 'api', 'hono']
@@ -569,7 +613,7 @@ pnpm dlx @nestjs/cli@latest new {{name}} \
    ```yaml
    $schema: 'https://moonrepo.dev/schemas/project.json'
 
-   type: 'application'
+   layer: 'application'
    language: 'typescript'
    stack: 'backend'
    tags: ['backend', 'api', 'nestjs']
@@ -663,7 +707,7 @@ uv init apps/{{name}} --lib
    ```yaml
    $schema: 'https://moonrepo.dev/schemas/project.json'
 
-   type: 'application'
+   layer: 'application'
    language: 'python'
    stack: 'backend'
    tags: ['backend', 'cli']
@@ -732,7 +776,7 @@ uv init apps/{{name}} --lib
    ```yaml
    $schema: 'https://moonrepo.dev/schemas/project.json'
 
-   type: 'application'
+   layer: 'application'
    language: 'python'
    stack: 'backend'
    tags: ['backend', 'api', 'fastapi']

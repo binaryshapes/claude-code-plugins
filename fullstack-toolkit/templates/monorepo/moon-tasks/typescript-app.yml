@@ -1,11 +1,30 @@
 # TypeScript Application Tasks
 # Inherited by all TypeScript applications
 
-extends: './_shared.yml'
-
 inheritedBy:
   toolchains: ['typescript']
   layers: ['application']
+
+fileGroups:
+  sources:
+    - 'src/**/*.{ts,tsx}'
+    - 'app/**/*.{ts,tsx}'
+    - 'components/**/*.{ts,tsx}'
+    - 'lib/**/*.{ts,tsx}'
+    - 'utils/**/*.{ts,tsx}'
+  tests:
+    - 'tests/**/*.{ts,tsx}'
+    - '**/*.test.{ts,tsx}'
+    - '**/*.spec.{ts,tsx}'
+    - '__tests__/**/*.{ts,tsx}'
+  configs:
+    - 'tsconfig.json'
+    - 'tsconfig.*.json'
+    - '*.config.{ts,js,mjs,cjs}'
+  assets:
+    - 'public/**/*'
+    - 'assets/**/*'
+    - 'static/**/*'
 
 implicitInputs:
   - 'package.json'
@@ -18,8 +37,8 @@ tasks:
   build:
     command: 'pnpm build'
     inputs:
-      - '@group(ts-sources)'
-      - '@group(ts-configs)'
+      - '@group(sources)'
+      - '@group(configs)'
       - '@group(assets)'
     outputs:
       - 'dist'
@@ -34,19 +53,19 @@ tasks:
   lint:
     command: 'pnpm lint'
     inputs:
-      - '@group(ts-sources)'
+      - '@group(sources)'
 
   typecheck:
     command: 'pnpm typecheck'
     inputs:
-      - '@group(ts-sources)'
-      - '@group(ts-configs)'
+      - '@group(sources)'
+      - '@group(configs)'
 
   test:
     command: 'pnpm test'
     inputs:
-      - '@group(ts-sources)'
-      - '@group(ts-tests)'
+      - '@group(sources)'
+      - '@group(tests)'
 
   clean:
     command: 'rm -rf dist .next build node_modules/.cache'

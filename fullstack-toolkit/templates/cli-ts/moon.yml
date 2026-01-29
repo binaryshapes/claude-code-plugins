@@ -1,6 +1,6 @@
 $schema: 'https://moonrepo.dev/schemas/project.json'
 
-type: 'tool'
+layer: 'tool'
 language: 'typescript'
 tags: ['cli']
 

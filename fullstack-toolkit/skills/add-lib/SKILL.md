@@ -76,6 +76,24 @@ For UI library, suggest default name: `ui`
 
 Ensure the appropriate toolchain is configured (same as `/add-app`).
 
+### Step 4b: Copy Task Definitions (Lazy Loading)
+
+Task definitions are copied from `templates/monorepo/moon-tasks/` to `.moon/tasks/` only when needed.
+
+```bash
+mkdir -p .moon/tasks
+```
+
+**For TypeScript Libraries:**
+```bash
+[ ! -f .moon/tasks/typescript-lib.yml ] && cp templates/monorepo/moon-tasks/typescript-lib.yml .moon/tasks/
+```
+
+**For Python Libraries:**
+```bash
+[ ! -f .moon/tasks/python-lib.yml ] && cp templates/monorepo/moon-tasks/python-lib.yml .moon/tasks/
+```
+
 ---
 
 ## Step 5: Scaffold Library
