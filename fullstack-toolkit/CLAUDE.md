@@ -45,7 +45,8 @@ fullstack-toolkit/
 ### Project Structure (Generated Monorepos)
 - `apps/` - Application projects
 - `packages/` - Shared libraries
-- `tools/` - CLI tools
+- `modules/` - Domain-specific modules
+- `scripts/` - CLI tools and scripts
 
 ## Common Commands
 

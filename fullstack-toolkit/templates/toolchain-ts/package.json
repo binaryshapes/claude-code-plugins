@@ -2,7 +2,7 @@
   "name": "{{PROJECT_NAME}}",
   "private": true,
   "type": "module",
-  "workspaces": ["apps/*", "packages/*", "tools/*"],
+  "workspaces": ["apps/*", "packages/*", "modules/*", "scripts/*"],
   "scripts": {
     "build": "moon run :build",
     "dev": "moon run :dev",

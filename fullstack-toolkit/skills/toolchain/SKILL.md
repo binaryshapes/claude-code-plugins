@@ -66,16 +66,16 @@ Add a new tool to the toolchain.
 - `tool`: Tool name (node, pnpm, python, uv, bun, deno, go, rust, etc.)
 - `version` (optional): Specific version or omit to use LTS/latest
 
-**Default versions (always use LTS when available):**
+**Default versions:**
 
-| Tool | Default Version |
-|------|-----------------|
-| `node` | `lts` |
-| `pnpm` | `lts` |
-| `python` | `lts` |
-| `uv` | `lts` |
-| `bun` | `lts` |
-| `deno` | `lts` |
+| Tool | Default Version | Notes |
+|------|-----------------|-------|
+| `node` | `lts` | Long-term support |
+| `pnpm` | `lts` | Long-term support |
+| `python` | `lts` | Long-term support |
+| `uv` | `latest` | Does not support `lts` |
+| `bun` | `lts` | Long-term support |
+| `deno` | `lts` | Long-term support |
 
 **Examples:**
 
@@ -132,7 +132,7 @@ Setup the complete TypeScript toolchain for a monorepo. This includes:
 - Node.js and pnpm (LTS versions via Proto)
 - Root `package.json` with workspaces and scripts
 - TypeScript configuration (`tsconfig.base.json`)
-- ESLint configuration (`eslint.config.js`)
+- ESLint configuration (`eslint.config.ts`)
 - Prettier configuration (`prettier.config.js`)
 - Vitest configuration (`vitest.config.ts`)
 - Pre-commit hooks in `lefthook.yml`
@@ -177,6 +177,20 @@ This updates:
 
 ---
 
+## Template Resolution
+
+This skill uses template files from the plugin directory when setting up toolchains:
+
+1. **Locate the plugin root**: Find where the `fullstack-toolkit` plugin is installed by searching for its `plugin.json` file.
+
+2. **Use Read and Write tools**: Instead of shell `cp` commands, use Claude's Read tool to read template contents and Write tool to create files.
+
+3. **Template locations** (relative to plugin root):
+   - `templates/toolchain-ts/` - TypeScript configs (tsconfig, eslint, prettier, vitest)
+   - `templates/toolchain-py/` - Python configs (ruff.toml, mypy.ini)
+
+---
+
 ## Instructions
 
 ### For `/toolchain list`
@@ -198,12 +212,13 @@ proto list
 1. Validate the tool name is supported by Proto
 2. Determine the version to use:
    - If version specified by user, use that version
-   - If no version specified, **always use `lts`** for these tools: `node`, `pnpm`, `python`, `uv`, `bun`, `deno`
-   - For other tools, use `latest`
+   - If no version specified, use `lts` for: `node`, `pnpm`, `python`, `bun`, `deno`
+   - For `uv` and other tools, use `latest` (uv does not support `lts`)
 3. Pin the tool:
 
 ```bash
-proto pin <tool> lts   # Always prefer lts for node, pnpm, python, uv, bun, deno
+proto pin <tool> lts     # For node, pnpm, python, bun, deno
+proto pin <tool> latest  # For uv and other tools
 ```
 
 4. Install the tool:
@@ -339,7 +354,7 @@ This configuration:
   "engines": {
     "node": ">=<NODE_VERSION>"
   },
-  "workspaces": ["apps/*", "packages/*", "tools/*"],
+  "workspaces": ["apps/*", "packages/*", "modules/*", "scripts/*"],
   "scripts": {
     "build": "moon run :build",
     "dev": "moon run :dev",
@@ -370,14 +385,24 @@ This configuration:
 
 Replace `<NODE_VERSION>` and `<PNPM_VERSION>` with the actual values from step 4.
 
-7. **Copy config files from `templates/toolchain-ts/`:**
+7. **Create `pnpm-workspace.yaml`** (required by pnpm for workspaces):
+
+```yaml
+packages:
+  - 'apps/*'
+  - 'packages/*'
+  - 'modules/*'
+  - 'scripts/*'
+```
+
+8. **Copy config files from `templates/toolchain-ts/`:**
 
 - `tsconfig.base.json`
-- `eslint.config.js`
+- `eslint.config.ts`
 - `prettier.config.js`
 - `vitest.config.ts`
 
-8. **Add TypeScript hooks to `lefthook.yml`:**
+9. **Add TypeScript hooks to `lefthook.yml`:**
 
 ```yaml
 pre-commit:
@@ -393,7 +418,7 @@ pre-commit:
       run: pnpm typecheck
 ```
 
-9. **Install dependencies:**
+10. **Install dependencies:**
 
 ```bash
 proto use
@@ -418,7 +443,7 @@ If python is already in `.prototools`, skip to step 6.
 
 ```bash
 proto pin python lts
-proto pin uv lts
+proto pin uv latest   # uv does not support lts
 proto install python
 proto install uv
 ```

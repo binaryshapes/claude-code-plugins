@@ -119,7 +119,7 @@ pnpm format
 
 The agent uses project-level configuration files:
 
-- `eslint.config.js` - ESLint flat config
+- `eslint.config.ts` - ESLint flat config (TypeScript)
 - `prettier.config.js` - Prettier configuration
 - `tsconfig.json` / `tsconfig.base.json` - TypeScript configuration
 

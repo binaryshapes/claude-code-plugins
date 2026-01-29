@@ -41,6 +41,24 @@ The skill will prompt you for:
 |------|-------------|
 | `py-lib` | Python library with type hints and PEP 561 |
 
+## Template Resolution
+
+This skill uses template files from the plugin directory. Before copying templates:
+
+1. **Locate the plugin root**: Find where the `fullstack-toolkit` plugin is installed by searching for its `plugin.json` file. The plugin contains a `templates/` directory with all necessary files.
+
+2. **Use Read and Write tools**: Instead of shell `cp` commands, use Claude's Read tool to read template contents and Write tool to create files. This ensures templates are found regardless of working directory.
+
+3. **Template locations** (relative to plugin root):
+   - `templates/monorepo/moon-tasks/` - Task definition files
+   - `templates/lib-ts/` - Pure TypeScript library template
+   - `templates/lib-react/` - React library template
+   - `templates/lib-ui/` - UI library template
+
+**Example**: To copy a template directory, read each file from the plugin's template and write to the project.
+
+---
+
 ## Instructions
 
 ### Step 1: Ask Language

@@ -27,7 +27,7 @@ Prompt the user to select what they want to add:
 |--------|-------------|-------|
 | **Application** | Web apps, mobile apps, APIs (placed in `apps/`) | `/add-app` |
 | **Library** | Reusable packages, UI components (placed in `packages/`) | `/add-lib` |
-| **CLI Tool** | Command-line interfaces (placed in `tools/`) | `/add-cli` |
+| **CLI Tool** | Command-line interfaces (placed in `scripts/`) | `/add-cli` |
 
 ### Step 2: Delegate to the Appropriate Skill
 

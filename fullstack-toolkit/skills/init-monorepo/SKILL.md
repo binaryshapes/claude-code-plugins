@@ -24,6 +24,8 @@ This skill creates a bare monorepo foundation using Moon as the build system and
 
 ```
 {project}/
+├── .claude/
+│   └── settings.json          # Claude Code permissions for moon/proto
 ├── .moon/
 │   ├── workspace.yml          # Moon workspace configuration
 │   └── toolchains.yml         # Moon toolchain configuration (empty)
@@ -32,8 +34,13 @@ This skill creates a bare monorepo foundation using Moon as the build system and
 ├── .editorconfig
 ├── lefthook.yml
 ├── apps/                      # Application projects
+│   └── .gitkeep
 ├── packages/                  # Shared libraries
-├── tools/                     # CLI tools
+│   └── .gitkeep
+├── modules/                   # Domain-specific modules
+│   └── .gitkeep
+├── scripts/                   # CLI tools and scripts
+│   └── .gitkeep
 └── README.md
 ```
 
@@ -42,6 +49,19 @@ This skill creates a bare monorepo foundation using Moon as the build system and
 - First Python app → `python-app.yml`
 - Using Next.js → `tag-next.yml`
 - etc.
+
+## Template Resolution
+
+This skill uses template files from the plugin directory:
+
+1. **Locate the plugin root**: Find where the `fullstack-toolkit` plugin is installed by searching for its `plugin.json` file.
+
+2. **Use Read and Write tools**: Instead of shell `cp` commands, use Claude's Read tool to read template contents and Write tool to create files.
+
+3. **Template locations** (relative to plugin root):
+   - `templates/monorepo/` - Base monorepo files (workspace.yml, gitignore, etc.)
+
+---
 
 ## Instructions
 
@@ -79,10 +99,38 @@ git init
 ### Step 4: Create Directory Structure
 
 ```bash
-mkdir -p apps packages tools .moon
+mkdir -p apps packages modules scripts .moon .claude
 ```
 
-### Step 5: Copy Configuration Files from Templates
+Create `.gitkeep` files to ensure empty directories are tracked by Git:
+
+```bash
+touch apps/.gitkeep packages/.gitkeep modules/.gitkeep scripts/.gitkeep
+```
+
+### Step 5: Create Claude Code Settings
+
+Create `.claude/settings.json` with pre-approved permissions for the monorepo tools. This allows Claude Code to run moon, proto, pnpm, and uv commands without asking for permission each time:
+
+```json
+{
+  "permissions": {
+    "allow": [
+      "Bash(proto *)",
+      "Bash(moon *)",
+      "Bash(pnpm *)",
+      "Bash(uv *)",
+      "Bash(lefthook *)"
+    ]
+  }
+}
+```
+
+**Why this is first:** Creating this file early ensures Claude Code has the necessary permissions before executing any `proto` or `moon` commands in subsequent steps.
+
+**Note:** Users can create `.claude/settings.local.json` for personal overrides (this file is gitignored by default).
+
+### Step 6: Copy Configuration Files from Templates
 
 Copy the following files from `templates/monorepo/`:
 
@@ -97,7 +145,7 @@ Copy the following files from `templates/monorepo/`:
 
 **Important:** Do NOT copy the `moon-tasks/` directory. Task definitions are added lazily by `/add-app`, `/add-lib`, and `/add-cli` when projects are created.
 
-### Step 6: Pin Moon Version with Proto
+### Step 7: Pin Moon Version with Proto
 
 Pin the latest Moon version to `.prototools` for consistent builds across the team:
 
@@ -107,7 +155,7 @@ proto pin moon --resolve
 
 This ensures everyone uses the same Moon version. The `--resolve` flag pins the exact semantic version.
 
-### Step 7: Install Moon via Proto
+### Step 8: Install Moon via Proto
 
 ```bash
 proto use
@@ -115,7 +163,7 @@ proto use
 
 This installs Moon (and any other pinned tools) based on `.prototools`.
 
-### Step 8: Create README.md
+### Step 9: Create README.md
 
 Create `README.md` with the following content (replace `{project-name}` with actual name):
 
@@ -144,7 +192,8 @@ moon run :install
 
 - `apps/` - Application projects
 - `packages/` - Shared libraries
-- `tools/` - CLI tools
+- `modules/` - Domain-specific modules
+- `scripts/` - CLI tools and scripts
 
 ## Commands
 
@@ -191,14 +240,14 @@ proto pin <tool> <version>
 ```
 ```
 
-### Step 9: Verify Setup
+### Step 10: Verify Setup
 
 ```bash
 moon --version
 proto --version
 ```
 
-### Step 10: Summary
+### Step 11: Summary
 
 Print a summary:
 
@@ -206,6 +255,7 @@ Print a summary:
 Monorepo initialized successfully!
 
 Created:
+  - .claude/settings.json    (Claude Code permissions)
   - .moon/workspace.yml      (workspace configuration)
   - .moon/toolchains.yml     (toolchain configuration)
   - .prototools              (pinned tool versions)

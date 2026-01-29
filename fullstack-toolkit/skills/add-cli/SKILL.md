@@ -9,7 +9,7 @@ Add a CLI (command-line interface) tool to the monorepo.
 
 ## Description
 
-This skill scaffolds a CLI tool. CLI tools are placed in the `tools/` directory and can be run directly or installed globally.
+This skill scaffolds a CLI tool. CLI tools are placed in the `scripts/` directory and can be run directly or installed globally.
 
 - **Python CLIs**: Use `uv init` + post-processing (add Typer + Rich)
 - **TypeScript CLIs**: Use templates (no official CLI scaffolder)
@@ -31,6 +31,22 @@ The skill will prompt you for:
 |----------|--------|-----------|----------|
 | TypeScript | Template | Commander.js + chalk | Argument parsing, colorful output, subcommands |
 | Python | `uv init` + deps | Typer + Rich | Type-safe CLI, beautiful terminal UI |
+
+## Template Resolution
+
+This skill uses template files from the plugin directory. Before copying templates:
+
+1. **Locate the plugin root**: Find where the `fullstack-toolkit` plugin is installed by searching for its `plugin.json` file. The plugin contains a `templates/` directory with all necessary files.
+
+2. **Use Read and Write tools**: Instead of shell `cp` commands, use Claude's Read tool to read template contents and Write tool to create files. This ensures templates are found regardless of working directory.
+
+3. **Template locations** (relative to plugin root):
+   - `templates/monorepo/moon-tasks/` - Task definition files
+   - `templates/cli-ts/` - TypeScript CLI template
+
+**Example**: To copy a template directory, read each file from the plugin's template and write to the project.
+
+---
 
 ## Instructions
 
@@ -87,7 +103,7 @@ mkdir -p .moon/tasks
 Copy the template from `templates/cli-ts/`:
 
 ```bash
-cp -r templates/cli-ts/ tools/{{name}}/
+cp -r templates/cli-ts/ scripts/{{name}}/
 ```
 
 #### 5b. Post-processing
@@ -110,24 +126,24 @@ cp -r templates/cli-ts/ tools/{{name}}/
 #### 5a. Run Official CLI
 
 ```bash
-uv init tools/{{name}} --lib
+uv init scripts/{{name}} --lib
 ```
 
 #### 5b. Post-processing
 
 1. **Add CLI dependencies**:
    ```bash
-   cd tools/{{name}}
+   cd scripts/{{name}}
    uv add typer rich
    ```
 
 2. **Create proper structure**:
    ```bash
-   mkdir -p tools/{{name}}/src/{{name}}/commands
-   mkdir -p tools/{{name}}/src/{{name}}/utils
-   touch tools/{{name}}/src/{{name}}/__init__.py
-   touch tools/{{name}}/src/{{name}}/commands/__init__.py
-   touch tools/{{name}}/src/{{name}}/utils/__init__.py
+   mkdir -p scripts/{{name}}/src/{{name}}/commands
+   mkdir -p scripts/{{name}}/src/{{name}}/utils
+   touch scripts/{{name}}/src/{{name}}/__init__.py
+   touch scripts/{{name}}/src/{{name}}/commands/__init__.py
+   touch scripts/{{name}}/src/{{name}}/utils/__init__.py
    ```
 
 3. **Create `src/{{name}}/__init__.py`**:
@@ -229,8 +245,8 @@ uv init tools/{{name}} --lib
 
 7. **Create tests**:
    ```bash
-   mkdir -p tools/{{name}}/tests
-   touch tools/{{name}}/tests/__init__.py
+   mkdir -p scripts/{{name}}/tests
+   touch scripts/{{name}}/tests/__init__.py
    ```
 
 8. **Create `tests/test_cli.py`**:
@@ -367,7 +383,7 @@ pnpm install
 
 **Python:**
 ```bash
-cd tools/{{name}}
+cd scripts/{{name}}
 uv sync
 ```
 
@@ -378,7 +394,7 @@ uv sync
 **TypeScript:**
 ```bash
 moon run {{name}}:build
-node tools/{{name}}/dist/index.js --help
+node scripts/{{name}}/dist/index.js --help
 ```
 
 **Python:**
@@ -391,7 +407,7 @@ uv run {{bin}} --help
 ## Step 8: Summary
 
 ```
-Created {{language}} CLI: tools/{{name}}
+Created {{language}} CLI: scripts/{{name}}
 
 Binary: {{bin}}
 
@@ -400,12 +416,12 @@ Commands:
   moon run {{name}}:test    # Run tests
 
 Usage:
-  TypeScript: node tools/{{name}}/dist/index.js --help
+  TypeScript: node scripts/{{name}}/dist/index.js --help
   Python:     uv run {{bin}} --help
 
 To install globally:
-  TypeScript: cd tools/{{name}} && pnpm link --global
-  Python:     uv tool install tools/{{name}}
+  TypeScript: cd scripts/{{name}} && pnpm link --global
+  Python:     uv tool install scripts/{{name}}
 ```
 
 ---
@@ -414,7 +430,7 @@ To install globally:
 
 - **Python CLIs**: Use `uv init` + add Typer/Rich for latest packaging
 - **TypeScript CLIs**: Use template from `templates/cli-ts/` (no official scaffolder)
-- CLI tools are placed in `tools/` directory
+- CLI tools are placed in `scripts/` directory
 - TypeScript CLIs are compiled with tsup and include shebang
 - Python CLIs can be run directly with `uv run` or installed globally
 - Build TypeScript CLI before running tests (tests execute compiled code)

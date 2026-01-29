@@ -174,7 +174,8 @@ my-project/
 ├── .prototools             # Proto toolchain versions
 ├── apps/                   # Application projects
 ├── packages/               # Shared libraries
-├── tools/                  # Internal CLI tools
+├── modules/                # Domain-specific modules
+├── scripts/                # CLI tools and scripts
 ├── lefthook.yml            # Pre-commit hooks
 ├── .gitignore
 └── .editorconfig

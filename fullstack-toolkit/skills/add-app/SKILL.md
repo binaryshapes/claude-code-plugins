@@ -41,6 +41,28 @@ The skill will prompt you for:
 | `minimal` | `uv init` | Minimal Python application |
 | `fastapi` | `uv init` + deps | FastAPI web API |
 
+## Template Resolution
+
+This skill uses template files from the plugin directory. Before copying templates:
+
+1. **Locate the plugin root**: Find where the `fullstack-toolkit` plugin is installed by searching for its `plugin.json` file. The plugin contains a `templates/` directory with all necessary files.
+
+2. **Use Read and Write tools**: Instead of shell `cp` commands, use Claude's Read tool to read template contents and Write tool to create files. This ensures templates are found regardless of working directory.
+
+3. **Template locations** (relative to plugin root):
+   - `templates/monorepo/moon-tasks/` - Task definition files
+   - `templates/app-orpc/` - oRPC application template
+   - `templates/toolchain-ts/` - TypeScript toolchain configs
+   - `templates/toolchain-py/` - Python toolchain configs
+
+**Example**: To copy a task file, read from the plugin's template and write to the project:
+```
+Read: <plugin-root>/templates/monorepo/moon-tasks/typescript-app.yml
+Write: .moon/tasks/typescript-app.yml
+```
+
+---
+
 ## Instructions
 
 ### Step 1: Ask Language
@@ -98,7 +120,7 @@ If not configured, invoke `/toolchain setup-typescript`. This will:
 
 - Add Node.js and pnpm (LTS versions) via Proto
 - Create root `package.json` with workspaces and dynamic versions from `.prototools`
-- Copy TypeScript configs (`tsconfig.base.json`, `eslint.config.js`, `prettier.config.js`, `vitest.config.ts`)
+- Copy TypeScript configs (`tsconfig.base.json`, `eslint.config.ts`, `prettier.config.js`, `vitest.config.ts`)
 - Add TypeScript hooks to `lefthook.yml`
 - Run `proto use` and `pnpm install`
 
@@ -196,18 +218,41 @@ pnpm create next-app@latest apps/{{name}} \
 
 #### 5b. Post-processing
 
-1. **Merge `.gitignore` into root** - Before removing, consolidate scaffold gitignore entries:
+1. **Merge `.gitignore` into root** - Consolidate scaffold gitignore entries avoiding duplications:
+
+   Read the scaffold's `.gitignore` and for each non-empty, non-comment line:
+   - Normalize the pattern (remove trailing slashes for comparison)
+   - Check if the pattern already exists in root `.gitignore` (with or without trailing slash)
+   - Only append if not already present
+   - Group new entries under a framework-specific comment section
+
    ```bash
-   # Read scaffold .gitignore and append missing entries to root .gitignore
    if [ -f apps/{{name}}/.gitignore ]; then
+     # Collect new entries
+     NEW_ENTRIES=""
      while IFS= read -r line || [ -n "$line" ]; do
-       # Skip empty lines and comments for comparison
-       if [ -n "$line" ] && ! grep -qxF "$line" .gitignore 2>/dev/null; then
-         echo "$line" >> .gitignore
+       # Skip empty lines and comments
+       [[ -z "$line" || "$line" =~ ^# ]] && continue
+
+       # Normalize: remove trailing slash for comparison
+       normalized="${line%/}"
+
+       # Check if pattern exists (with or without trailing slash)
+       if ! grep -qE "^${normalized}/?$" .gitignore 2>/dev/null; then
+         NEW_ENTRIES="${NEW_ENTRIES}${line}\n"
        fi
      done < apps/{{name}}/.gitignore
+
+     # Append new entries under a section header if any
+     if [ -n "$NEW_ENTRIES" ]; then
+       echo "" >> .gitignore
+       echo "# Next.js" >> .gitignore
+       echo -e "$NEW_ENTRIES" >> .gitignore
+     fi
    fi
    ```
+
+   **Note:** The root `.gitignore` from `/init-monorepo` already includes common patterns. Only framework-specific patterns (like `.next/`, `.vercel/`) should be added.
 
 2. **Remove unnecessary files** (already handled by monorepo):
    ```bash
@@ -216,11 +261,11 @@ pnpm create next-app@latest apps/{{name}} \
    rm -f apps/{{name}}/.gitignore
    ```
 
-3. **Clean up `/public` directory** - Remove default Next.js assets:
+3. **Clean up `/public` directory** - Remove default Next.js branding assets (keep favicon):
    ```bash
    rm -f apps/{{name}}/public/*.svg
-   rm -f apps/{{name}}/public/*.ico
    rm -f apps/{{name}}/public/*.png
+   # Keep favicon.ico - apps typically need one
    ```
 
 4. **Simplify `src/app/page.tsx`** - Replace with minimal Hello World:
