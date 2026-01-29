@@ -1,4 +1,4 @@
-# Expo specific task overrides
+# Expo specific task overrides (Moon v2)
 # Applied to projects with tag: 'expo'
 
 inheritedBy:
@@ -7,12 +7,15 @@ inheritedBy:
 tasks:
   android:
     command: 'pnpm android'
-    local: true
+    options:
+      persistent: true
 
   ios:
     command: 'pnpm ios'
-    local: true
+    options:
+      persistent: true
 
   web:
     command: 'pnpm web'
-    local: true
+    options:
+      persistent: true

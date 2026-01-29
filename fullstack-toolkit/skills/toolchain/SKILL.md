@@ -71,7 +71,7 @@ Add a new tool to the toolchain.
 | Tool | Default Version | Notes |
 |------|-----------------|-------|
 | `node` | `lts` | Long-term support |
-| `pnpm` | `lts` | Long-term support |
+| `pnpm` | `latest` | Does not support `lts` |
 | `python` | `lts` | Long-term support |
 | `uv` | `latest` | Does not support `lts` |
 | `bun` | `lts` | Long-term support |
@@ -212,13 +212,13 @@ proto list
 1. Validate the tool name is supported by Proto
 2. Determine the version to use:
    - If version specified by user, use that version
-   - If no version specified, use `lts` for: `node`, `pnpm`, `python`, `bun`, `deno`
-   - For `uv` and other tools, use `latest` (uv does not support `lts`)
+   - If no version specified, use `lts` for: `node`, `python`, `bun`, `deno`
+   - For `pnpm`, `uv`, and other tools, use `latest` (they don't support `lts`)
 3. Pin the tool:
 
 ```bash
-proto pin <tool> lts     # For node, pnpm, python, bun, deno
-proto pin <tool> latest  # For uv and other tools
+proto pin <tool> lts     # For node, python, bun, deno
+proto pin <tool> latest  # For pnpm, uv, and other tools
 ```
 
 4. Install the tool:
@@ -295,7 +295,7 @@ If node is already in `.prototools`, skip to step 9.
 
 ```bash
 proto pin node lts
-proto pin pnpm lts
+proto pin pnpm latest   # pnpm does not support lts
 proto install node
 proto install pnpm
 ```

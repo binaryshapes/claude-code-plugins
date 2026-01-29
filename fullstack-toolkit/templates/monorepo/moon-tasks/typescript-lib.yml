@@ -1,5 +1,5 @@
 # TypeScript Library Tasks
-# Inherited by all TypeScript libraries
+# Inherited by all TypeScript libraries (Moon v2)
 
 inheritedBy:
   toolchains: ['typescript']
@@ -25,7 +25,8 @@ implicitInputs:
 tasks:
   dev:
     command: 'pnpm dev'
-    local: true
+    options:
+      persistent: true
 
   build:
     command: 'pnpm build'
@@ -33,7 +34,7 @@ tasks:
       - '@group(sources)'
       - '@group(configs)'
     outputs:
-      - 'dist'
+      - 'dist/**/*'
 
   lint:
     command: 'pnpm lint'

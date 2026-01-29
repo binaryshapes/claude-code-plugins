@@ -325,11 +325,13 @@ pnpm create next-app@latest apps/{{name}} \
    }
    ```
 
-8. **Update `tsconfig.json`** - Extend base config:
+8. **Update `tsconfig.json`** - Extend base config with Next.js specific options:
    ```json
    {
      "extends": "../../tsconfig.base.json",
      "compilerOptions": {
+       "jsx": "preserve",
+       "lib": ["dom", "dom.iterable", "esnext"],
        "plugins": [{ "name": "next" }],
        "baseUrl": ".",
        "paths": { "@/*": ["./src/*"] }
@@ -338,6 +340,8 @@ pnpm create next-app@latest apps/{{name}} \
      "exclude": ["node_modules"]
    }
    ```
+
+   **Note:** `jsx: "preserve"` is required for Next.js, and `lib` must include DOM types.
 
 9. **Create `moon.yml`** (simplified - tasks inherited from `.moon/tasks/`):
    ```yaml

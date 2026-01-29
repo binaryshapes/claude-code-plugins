@@ -1,5 +1,5 @@
 # Python Library Tasks
-# Inherited by all Python libraries
+# Inherited by all Python libraries (Moon v2)
 
 inheritedBy:
   toolchains: ['python']
@@ -30,7 +30,7 @@ tasks:
       - '@group(sources)'
       - '@group(configs)'
     outputs:
-      - 'dist'
+      - 'dist/**/*'
 
   lint:
     command: 'uv run ruff check src tests'

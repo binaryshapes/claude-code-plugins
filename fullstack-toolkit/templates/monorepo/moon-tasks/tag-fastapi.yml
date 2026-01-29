@@ -1,4 +1,4 @@
-# FastAPI specific task overrides
+# FastAPI specific task overrides (Moon v2)
 # Applied to projects with tag: 'fastapi'
 
 inheritedBy:
@@ -7,7 +7,8 @@ inheritedBy:
 tasks:
   dev:
     command: 'uv run uvicorn $project.main:app --reload --port 8000'
-    local: true
+    options:
+      persistent: true
 
   start:
     command: 'uv run uvicorn $project.main:app --port 8000'

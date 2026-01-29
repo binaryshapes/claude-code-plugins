@@ -1,21 +1,16 @@
 $schema: 'https://moonrepo.dev/schemas/workspace.json'
 
+# Project locations
 projects:
   - 'apps/*'
   - 'packages/*'
   - 'modules/*'
   - 'scripts/*'
 
+# Version control settings (Moon v2 syntax)
 vcs:
-  manager: 'git'
+  client: 'git'
   defaultBranch: 'main'
 
+# Disable telemetry
 telemetry: false
-
-notifier:
-  webhookUrl: null
-
-runner:
-  archivableTargets:
-    - ':build'
-    - ':test'

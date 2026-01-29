@@ -1,5 +1,5 @@
 # Python Application Tasks
-# Inherited by all Python applications
+# Inherited by all Python applications (Moon v2)
 
 inheritedBy:
   toolchains: ['python']
@@ -26,7 +26,8 @@ implicitInputs:
 tasks:
   dev:
     command: 'uv run $project'
-    local: true
+    options:
+      persistent: true
 
   build:
     command: 'uv build'
@@ -34,7 +35,7 @@ tasks:
       - '@group(sources)'
       - '@group(configs)'
     outputs:
-      - 'dist'
+      - 'dist/**/*'
 
   lint:
     command: 'uv run ruff check src tests'

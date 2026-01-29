@@ -147,13 +147,13 @@ Copy the following files from `templates/monorepo/`:
 
 ### Step 7: Pin Moon Version with Proto
 
-Pin the latest Moon version to `.prototools` for consistent builds across the team:
+Pin Moon v2 to `.prototools` for consistent builds across the team:
 
 ```bash
-proto pin moon --resolve
+proto pin moon 2.0.0-rc.0 --resolve
 ```
 
-This ensures everyone uses the same Moon version. The `--resolve` flag pins the exact semantic version.
+**Note:** This plugin requires Moon v2 for task inheritance features (`inheritedBy`). The `--resolve` flag pins the exact semantic version. Update to stable v2 when released.
 
 ### Step 8: Install Moon via Proto
 

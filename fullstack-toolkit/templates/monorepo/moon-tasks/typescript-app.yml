@@ -1,5 +1,5 @@
 # TypeScript Application Tasks
-# Inherited by all TypeScript applications
+# Inherited by all TypeScript applications (Moon v2)
 
 inheritedBy:
   toolchains: ['typescript']
@@ -32,7 +32,8 @@ implicitInputs:
 tasks:
   dev:
     command: 'pnpm dev'
-    local: true
+    options:
+      persistent: true
 
   build:
     command: 'pnpm build'
@@ -41,9 +42,9 @@ tasks:
       - '@group(configs)'
       - '@group(assets)'
     outputs:
-      - 'dist'
-      - '.next'
-      - 'build'
+      - 'dist/**/*'
+      - '.next/**/*'
+      - 'build/**/*'
 
   start:
     command: 'pnpm start'
