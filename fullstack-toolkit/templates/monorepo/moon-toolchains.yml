@@ -1,0 +1,20 @@
+# Moon toolchains configuration
+# https://moonrepo.dev/docs/config/toolchain
+$schema: 'https://moonrepo.dev/schemas/toolchain.json'
+
+# Proto integration - versions are read from .prototools
+# When proto is configured, Moon uses it to manage tool versions automatically
+# https://moonrepo.dev/docs/proto/tools
+
+# Language toolchains are configured below when first project of that type is added.
+# Use /toolchain setup-typescript or /toolchain setup-python to configure.
+
+# Example TypeScript/Node.js configuration (added by /toolchain setup-typescript):
+# javascript:
+#   packageManager: 'pnpm'
+# node: {}
+# pnpm: {}
+# typescript: {}
+
+# Example Python configuration (added by /toolchain setup-python):
+# python: {}

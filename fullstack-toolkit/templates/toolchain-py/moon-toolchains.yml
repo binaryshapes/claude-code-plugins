@@ -1,0 +1,5 @@
+# Python toolchain configuration for Moon
+# https://moonrepo.dev/docs/config/toolchain
+
+# Python toolchain - version from .prototools
+python: {}

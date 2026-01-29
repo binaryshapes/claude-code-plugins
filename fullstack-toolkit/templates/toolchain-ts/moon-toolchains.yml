@@ -1,0 +1,15 @@
+# TypeScript/Node.js toolchain configuration for Moon
+# https://moonrepo.dev/docs/config/toolchain
+
+# JavaScript configuration - specifies package manager
+javascript:
+  packageManager: 'pnpm'
+
+# Node.js toolchain - version from .prototools
+node: {}
+
+# pnpm package manager - version from .prototools
+pnpm: {}
+
+# TypeScript support
+typescript: {}

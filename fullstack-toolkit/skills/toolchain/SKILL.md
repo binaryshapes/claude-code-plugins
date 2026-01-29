@@ -272,7 +272,7 @@ proto status
 grep -q "node" .prototools 2>/dev/null
 ```
 
-If node is already in `.prototools`, skip to step 8.
+If node is already in `.prototools`, skip to step 9.
 
 2. **Add Node.js and pnpm via Proto:**
 
@@ -301,7 +301,34 @@ NODE_VERSION=$(grep '^node' .prototools | sed 's/.*= *"//' | sed 's/".*//')
 PNPM_VERSION=$(grep '^pnpm' .prototools | sed 's/.*= *"//' | sed 's/".*//')
 ```
 
-5. **Create root `package.json`** with dynamic versions:
+5. **Update `.moon/toolchains.yml`** for Node.js integration:
+
+Merge the configuration from `templates/toolchain-ts/moon-toolchains.yml` into `.moon/toolchains.yml`:
+
+```yaml
+$schema: 'https://moonrepo.dev/schemas/toolchain.json'
+
+# JavaScript/TypeScript toolchain
+# Versions are automatically read from .prototools via Proto integration
+javascript:
+  packageManager: 'pnpm'
+
+# Enable Node.js - version from .prototools
+node: {}
+
+# Enable pnpm - version from .prototools
+pnpm: {}
+
+# Enable TypeScript support
+typescript: {}
+```
+
+This configuration:
+- Sets pnpm as the package manager for JavaScript projects
+- Enables Node.js, pnpm, and TypeScript toolchains
+- Versions are automatically read from `.prototools` via Proto integration
+
+> **Note:** If Python is already configured, append these entries to the existing file.
 
 ```json
 {
@@ -343,14 +370,14 @@ PNPM_VERSION=$(grep '^pnpm' .prototools | sed 's/.*= *"//' | sed 's/".*//')
 
 Replace `<NODE_VERSION>` and `<PNPM_VERSION>` with the actual values from step 4.
 
-6. **Copy config files from `templates/toolchain-ts/`:**
+7. **Copy config files from `templates/toolchain-ts/`:**
 
 - `tsconfig.base.json`
 - `eslint.config.js`
 - `prettier.config.js`
 - `vitest.config.ts`
 
-7. **Add TypeScript hooks to `lefthook.yml`:**
+8. **Add TypeScript hooks to `lefthook.yml`:**
 
 ```yaml
 pre-commit:
@@ -366,7 +393,7 @@ pre-commit:
       run: pnpm typecheck
 ```
 
-8. **Install dependencies:**
+9. **Install dependencies:**
 
 ```bash
 proto use
@@ -383,7 +410,7 @@ pnpm install
 grep -q "python" .prototools 2>/dev/null
 ```
 
-If python is already in `.prototools`, skip to step 5.
+If python is already in `.prototools`, skip to step 6.
 
 2. **Add Python and uv via Proto:**
 
@@ -404,12 +431,28 @@ proto status
 
 This will show all configured tools and their versions. Verify that python and uv are listed correctly.
 
-4. **Copy config files from `templates/toolchain-py/`:**
+4. **Update `.moon/toolchains.yml`** for Python integration:
+
+Merge the configuration from `templates/toolchain-py/moon-toolchains.yml` into `.moon/toolchains.yml`:
+
+```yaml
+$schema: 'https://moonrepo.dev/schemas/toolchain.json'
+
+# Python toolchain
+# Version is automatically read from .prototools via Proto integration
+python: {}
+```
+
+This enables the Python toolchain. The version is automatically read from `.prototools` via Proto integration.
+
+> **Note:** If TypeScript is already configured, append the `python: {}` entry to the existing file.
+
+5. **Copy config files from `templates/toolchain-py/`:**
 
 - `ruff.toml`
 - `mypy.ini`
 
-5. **Add Python hooks to `lefthook.yml`:**
+6. **Add Python hooks to `lefthook.yml`:**
 
 ```yaml
 pre-commit:
@@ -426,7 +469,7 @@ pre-commit:
       run: uv run mypy {staged_files}
 ```
 
-6. **Install toolchain:**
+7. **Install toolchain:**
 
 ```bash
 proto use
@@ -526,3 +569,35 @@ For full list: `proto list-plugins`
 - Different projects can use different versions via nested `.prototools`
 - Always run `/toolchain sync` after upgrading to keep `package.json` consistent
 - `setup-typescript` and `setup-python` are idempotent (safe to run multiple times)
+
+---
+
+## Integration with Project Skills
+
+When `/add-app`, `/add-lib`, or `/add-cli` creates a new project:
+
+### TypeScript Projects
+
+1. **Auto-setup toolchain** if not configured:
+   - If `node` not in `.prototools`, invoke `/toolchain setup-typescript`
+
+2. **Install dependencies** after scaffolding:
+   ```bash
+   pnpm install
+   ```
+
+### Python Projects
+
+1. **Auto-setup toolchain** if not configured:
+   - If `python` not in `.prototools`, invoke `/toolchain setup-python`
+
+2. **Install dependencies** after scaffolding:
+   ```bash
+   cd apps/{{name}}
+   uv sync
+   ```
+
+This ensures that:
+- Toolchain is always configured before first use
+- Dependencies are installed immediately after project creation
+- Package manager versions are consistent via `.prototools`
