@@ -1,3 +1,8 @@
+---
+name: check
+description: Run all quality checks (lint, typecheck, test)
+---
+
 # /check
 
 Run all quality checks across the monorepo.

@@ -1,3 +1,8 @@
+---
+name: build
+description: Build all projects in the monorepo
+---
+
 # /build
 
 Build all projects in the monorepo.

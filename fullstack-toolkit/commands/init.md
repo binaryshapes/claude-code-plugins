@@ -1,3 +1,8 @@
+---
+name: init
+description: Initialize a Moon + Proto monorepo
+---
+
 # /init
 
 Initialize a language-agnostic Moon + Proto monorepo.

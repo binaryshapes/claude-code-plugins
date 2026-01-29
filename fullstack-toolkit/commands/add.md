@@ -1,3 +1,8 @@
+---
+name: add
+description: Add a new project to the monorepo (app, library, or CLI)
+---
+
 # /add
 
 Add a new project to the monorepo.

@@ -1,3 +1,8 @@
+---
+name: format
+description: Format all code (Prettier for TS, Ruff for Python)
+---
+
 # /format
 
 Format all code in the monorepo.
