@@ -73,7 +73,39 @@ Ask for the project name if not provided:
 - Default to the current directory name
 - Validate it's a valid package name (lowercase, no spaces)
 
-### Step 2: Check Prerequisites
+### Step 2: Create Claude Code Settings (FIRST)
+
+Create the `.claude/` directory and `.claude/settings.json` with pre-approved permissions. This MUST be the first file created to ensure Claude Code has the necessary permissions before executing any commands in subsequent steps.
+
+```bash
+mkdir -p .claude
+```
+
+Then create `.claude/settings.json` with:
+
+```json
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir *)",
+      "Bash(touch *)",
+      "Bash(proto *)",
+      "Bash(moon *)",
+      "Bash(pnpm *)",
+      "Bash(uv *)",
+      "Bash(lefthook *)",
+      "Bash(git rev-parse *)",
+      "Bash(git init)"
+    ]
+  }
+}
+```
+
+**Important - Git permissions policy:** Only verification (`git rev-parse`) and initialization (`git init`) commands are allowed. Strategic git operations (commits, branches, remotes, rebase, push, pull, merge, etc.) are intentionally excluded and require explicit user approval. This prevents accidental repository modifications during scaffolding.
+
+**Note:** Users can create `.claude/settings.local.json` for personal overrides (this file is gitignored by default).
+
+### Step 3: Check Prerequisites
 
 Verify that Proto is installed:
 
@@ -88,18 +120,24 @@ Proto is not installed. Install it with:
 curl -fsSL https://moonrepo.dev/install/proto.sh | bash
 ```
 
-### Step 3: Initialize Git Repository
+### Step 4: Initialize Git Repository
 
-If not already a git repository:
+Check if already a git repository:
+
+```bash
+git rev-parse --is-inside-work-tree
+```
+
+If not already a git repository, initialize it:
 
 ```bash
 git init
 ```
 
-### Step 4: Create Directory Structure
+### Step 5: Create Directory Structure
 
 ```bash
-mkdir -p apps packages modules scripts .moon .claude
+mkdir -p apps packages modules scripts .moon
 ```
 
 Create `.gitkeep` files to ensure empty directories are tracked by Git:
@@ -107,28 +145,6 @@ Create `.gitkeep` files to ensure empty directories are tracked by Git:
 ```bash
 touch apps/.gitkeep packages/.gitkeep modules/.gitkeep scripts/.gitkeep
 ```
-
-### Step 5: Create Claude Code Settings
-
-Create `.claude/settings.json` with pre-approved permissions for the monorepo tools. This allows Claude Code to run moon, proto, pnpm, and uv commands without asking for permission each time:
-
-```json
-{
-  "permissions": {
-    "allow": [
-      "Bash(proto *)",
-      "Bash(moon *)",
-      "Bash(pnpm *)",
-      "Bash(uv *)",
-      "Bash(lefthook *)"
-    ]
-  }
-}
-```
-
-**Why this is first:** Creating this file early ensures Claude Code has the necessary permissions before executing any `proto` or `moon` commands in subsequent steps.
-
-**Note:** Users can create `.claude/settings.local.json` for personal overrides (this file is gitignored by default).
 
 ### Step 6: Copy Configuration Files from Templates
 

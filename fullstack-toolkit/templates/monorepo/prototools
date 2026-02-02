@@ -1,12 +1,4 @@
-# Proto toolchain configuration
-# Tools are pinned to ensure consistent versions across the team
-# Run `proto use` to install all pinned tools
-
+# Proto general settings.
 [settings]
 auto-install = true
 auto-clean = true
-
-# Moon is pinned during init with: proto pin moon
-# Language toolchains are added by /toolchain skill:
-#   TypeScript: node, pnpm
-#   Python: python, uv
