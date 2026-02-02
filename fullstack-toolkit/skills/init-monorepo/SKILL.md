@@ -1,6 +1,16 @@
 ---
 name: init-monorepo
 description: Initialize a language-agnostic Moon + Proto monorepo
+allowed-tools: |
+  Bash(mkdir *)
+  Bash(touch *)
+  Bash(proto *)
+  Bash(moon *)
+  Bash(git rev-parse *)
+  Bash(git init)
+  Read
+  Write
+  Glob
 ---
 
 # /init-monorepo
@@ -73,15 +83,17 @@ Ask for the project name if not provided:
 - Default to the current directory name
 - Validate it's a valid package name (lowercase, no spaces)
 
-### Step 2: Create Claude Code Settings (FIRST)
+### Step 2: Create Claude Code Settings for the Monorepo
 
-Create the `.claude/` directory and `.claude/settings.json` with pre-approved permissions. This MUST be the first file created to ensure Claude Code has the necessary permissions before executing any commands in subsequent steps.
+**Note:** This skill already has `allowed-tools` declared in its frontmatter, so Claude Code won't ask for permission during skill execution. The `.claude/settings.json` file created here is for **future users** of the generated monorepo.
+
+Create the `.claude/` directory:
 
 ```bash
 mkdir -p .claude
 ```
 
-Then create `.claude/settings.json` with:
+Then create `.claude/settings.json` with permissions for common monorepo operations:
 
 ```json
 {
