@@ -1,16 +1,7 @@
 ---
 name: init-monorepo
 description: Initialize a language-agnostic Moon + Proto monorepo
-allowed-tools: |
-  Bash(mkdir *)
-  Bash(touch *)
-  Bash(proto *)
-  Bash(moon *)
-  Bash(git rev-parse *)
-  Bash(git init)
-  Read
-  Write
-  Glob
+allowed-tools: Bash(mkdir *), Bash(touch *), Bash(proto *), Bash(moon *), Bash(git rev-parse *), Bash(git init), Read, Write, Glob
 ---
 
 # /init-monorepo

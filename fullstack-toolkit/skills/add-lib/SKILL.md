@@ -1,6 +1,7 @@
 ---
 name: add-lib
 description: Add a library to the monorepo (TypeScript or Python)
+allowed-tools: Bash(mkdir *), Bash(touch *), Bash(rm *), Bash(cp *), Bash(grep *), Bash(cd *), Bash(pnpm *), Bash(uv *), Bash(proto *), Bash(moon *), Read, Write, Glob, Skill
 ---
 
 # /add-lib

@@ -1,6 +1,7 @@
 ---
 name: add-cli
 description: Add a CLI tool to the monorepo (TypeScript or Python)
+allowed-tools: Bash(mkdir *), Bash(touch *), Bash(rm *), Bash(cp *), Bash(grep *), Bash(cd *), Bash(pnpm *), Bash(uv *), Bash(proto *), Bash(moon *), Read, Write, Glob, Skill
 ---
 
 # /add-cli
