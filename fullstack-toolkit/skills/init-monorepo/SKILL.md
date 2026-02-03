@@ -75,17 +75,27 @@ This skill uses template files from the plugin directory:
 
 When the user invokes `/init-monorepo`, follow these steps:
 
-### Step 1: Gather Information
+### Step 1: Create Claude Code Settings (FIRST)
 
-Ask for the project name if not provided:
-- Default to the current directory name
-- Validate it's a valid package name (lowercase, no spaces)
+**This MUST be the very first step** to grant permissions for subsequent commands and avoid repeated permission prompts.
 
-### Step 2: Create Claude Code Settings for the Monorepo
+#### 1a. Check if directory is empty
 
-**Note:** This skill already has `allowed-tools` declared in its frontmatter, so Claude Code won't ask for permission during skill execution. The `.claude/settings.json` file created here is for **future users** of the generated monorepo.
+Check if the current directory is empty (excluding hidden files like `.git`):
 
-Create the `.claude/` directory:
+```bash
+ls -A | grep -v '^\.git$' | head -1
+```
+
+#### 1b. Create settings based on directory state
+
+**If directory is empty:** Create the settings file directly without asking.
+
+**If directory is NOT empty:** Ask the user: "The current directory is not empty. Do you want to create `.claude/settings.json` to enable fullstack-toolkit permissions?"
+- If yes, proceed to create the file
+- If no, abort the skill execution
+
+#### 1c. Create the settings file
 
 ```bash
 mkdir -p .claude
@@ -93,9 +103,15 @@ mkdir -p .claude
 
 Then copy the settings template from `templates/monorepo/claude-settings.json` to `.claude/settings.json`.
 
-**Why Skill permissions:** Granting permission per skill allows Claude Code to execute the entire skill workflow without asking for individual tool permissions. Each skill has its own `allowed-tools` declared in its frontmatter that enables the specific Bash commands it needs.
+**Why this is first:** The settings file grants permission for all fullstack-toolkit skills. Once created, Claude Code will not ask for permission to execute skill commands during this session and future sessions.
 
 **Note:** Users can create `.claude/settings.local.json` for personal overrides (this file is gitignored by default).
+
+### Step 2: Gather Information
+
+Ask for the project name if not provided:
+- Default to the current directory name
+- Validate it's a valid package name (lowercase, no spaces)
 
 ### Step 3: Check Prerequisites
 
@@ -179,10 +195,10 @@ Pin Node.js and pnpm for commitlint and monorepo tooling:
 
 ```bash
 proto pin node lts --resolve
-proto pin pnpm lts --resolve
+proto pin pnpm latest --resolve
 ```
 
-**Note:** Node.js and pnpm are required for commitlint and release-please tooling, regardless of the languages used in your projects.
+**Note:** Node.js uses `lts` but pnpm uses `latest` (pnpm doesn't support the `lts` alias). These tools are required for commitlint and release-please tooling, regardless of the languages used in your projects.
 
 ### Step 9: Install Tools via Proto
 
