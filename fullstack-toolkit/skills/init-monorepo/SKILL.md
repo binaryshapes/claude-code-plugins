@@ -91,27 +91,9 @@ Create the `.claude/` directory:
 mkdir -p .claude
 ```
 
-Then create `.claude/settings.json` with permissions for common monorepo operations:
+Then copy the settings template from `templates/monorepo/claude-settings.json` to `.claude/settings.json`.
 
-```json
-{
-  "permissions": {
-    "allow": [
-      "Bash(mkdir *)",
-      "Bash(touch *)",
-      "Bash(proto *)",
-      "Bash(moon *)",
-      "Bash(pnpm *)",
-      "Bash(uv *)",
-      "Bash(lefthook *)",
-      "Bash(git rev-parse *)",
-      "Bash(git init)"
-    ]
-  }
-}
-```
-
-**Important - Git permissions policy:** Only verification (`git rev-parse`) and initialization (`git init`) commands are allowed. Strategic git operations (commits, branches, remotes, rebase, push, pull, merge, etc.) are intentionally excluded and require explicit user approval. This prevents accidental repository modifications during scaffolding.
+**Why Skill permissions:** Granting permission per skill allows Claude Code to execute the entire skill workflow without asking for individual tool permissions. Each skill has its own `allowed-tools` declared in its frontmatter that enables the specific Bash commands it needs.
 
 **Note:** Users can create `.claude/settings.local.json` for personal overrides (this file is gitignored by default).
 
@@ -162,6 +144,7 @@ Copy the following files from `templates/monorepo/`:
 
 | Template File | Destination | Description |
 |---------------|-------------|-------------|
+| `claude-settings.json` | `.claude/settings.json` | Claude Code skill permissions |
 | `moon-workspace.yml` | `.moon/workspace.yml` | Moon workspace configuration |
 | `moon-toolchains.yml` | `.moon/toolchains.yml` | Moon toolchain configuration |
 | `prototools` | `.prototools` | Proto settings (auto-install, auto-clean) |
