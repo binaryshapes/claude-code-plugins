@@ -1,4 +1,7 @@
-# Proto general settings.
+
 [settings]
 auto-install = true
 auto-clean = true
+
+[plugins.tools]
+lefthook = "https://raw.githubusercontent.com/ageha734/proto-plugins/refs/heads/master/toml/lefthook.toml"

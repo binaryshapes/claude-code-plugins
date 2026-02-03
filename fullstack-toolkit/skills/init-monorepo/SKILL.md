@@ -179,15 +179,16 @@ Copy the following files from `templates/monorepo/`:
 mkdir -p .github/workflows
 ```
 
-### Step 7: Pin Moon Version with Proto
+### Step 7: Pin Moon and Lefthook with Proto
 
-Pin Moon v2 to `.prototools` for consistent builds across the team:
+Pin Moon v2 and Lefthook to `.prototools` for consistent builds across the team:
 
 ```bash
-proto pin moon 2.0.0-rc.0 --resolve
+proto pin moon 2.0.0-rc.1 --resolve
+proto pin lefthook latest --resolve
 ```
 
-**Note:** This plugin requires Moon v2 for task inheritance features (`inheritedBy`). The `--resolve` flag pins the exact semantic version. Update to stable v2 when released.
+**Note:** This plugin requires Moon v2 for task inheritance features (`inheritedBy`). Lefthook is managed via a Proto plugin defined in the prototools template. The `--resolve` flag pins the exact semantic version.
 
 ### Step 8: Pin Node.js and pnpm with Proto
 
@@ -198,7 +199,7 @@ proto pin node lts --resolve
 proto pin pnpm latest --resolve
 ```
 
-**Note:** Node.js uses `lts` but pnpm uses `latest` (pnpm doesn't support the `lts` alias). These tools are required for commitlint and release-please tooling, regardless of the languages used in your projects.
+**Note:** Node.js uses `lts` but pnpm and lefthook use `latest` (they don't support the `lts` alias). These tools are required for commitlint and release-please tooling, regardless of the languages used in your projects.
 
 ### Step 9: Install Tools via Proto
 
@@ -206,7 +207,7 @@ proto pin pnpm latest --resolve
 proto use
 ```
 
-This installs Moon, Node.js, pnpm, and any other pinned tools based on `.prototools`.
+This installs Moon, Lefthook, Node.js, pnpm, and any other pinned tools based on `.prototools`.
 
 ### Step 10: Create Root package.json
 
