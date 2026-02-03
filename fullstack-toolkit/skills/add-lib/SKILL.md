@@ -427,7 +427,31 @@ moon run {{name}}:build
 
 ---
 
-## Step 8: Summary
+## Step 8: Register in Release Please
+
+Add the new library to `release-please-config.json` for independent versioning:
+
+```json
+{
+  "packages": {
+    "packages/{{name}}": {}
+  }
+}
+```
+
+**Implementation:** Read the existing `release-please-config.json`, add the new package path to the `packages` object, and write it back.
+
+Also initialize the version in `.release-please-manifest.json`:
+
+```json
+{
+  "packages/{{name}}": "0.0.0"
+}
+```
+
+---
+
+## Step 9: Summary
 
 ```
 Created {{language}} library: packages/{{name}}

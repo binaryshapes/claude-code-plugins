@@ -853,7 +853,31 @@ uv sync
 
 ---
 
-## Step 7: Summary
+## Step 7: Register in Release Please
+
+Add the new application to `release-please-config.json` for independent versioning:
+
+```json
+{
+  "packages": {
+    "apps/{{name}}": {}
+  }
+}
+```
+
+**Implementation:** Read the existing `release-please-config.json`, add the new package path to the `packages` object, and write it back.
+
+Also initialize the version in `.release-please-manifest.json`:
+
+```json
+{
+  "apps/{{name}}": "0.0.0"
+}
+```
+
+---
+
+## Step 8: Summary
 
 ```
 Created {{language}} application: apps/{{name}}

@@ -405,7 +405,31 @@ uv run {{bin}} --help
 
 ---
 
-## Step 8: Summary
+## Step 8: Register in Release Please
+
+Add the new CLI to `release-please-config.json` for independent versioning:
+
+```json
+{
+  "packages": {
+    "scripts/{{name}}": {}
+  }
+}
+```
+
+**Implementation:** Read the existing `release-please-config.json`, add the new package path to the `packages` object, and write it back.
+
+Also initialize the version in `.release-please-manifest.json`:
+
+```json
+{
+  "scripts/{{name}}": "0.0.0"
+}
+```
+
+---
+
+## Step 9: Summary
 
 ```
 Created {{language}} CLI: scripts/{{name}}

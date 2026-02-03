@@ -1,7 +1,7 @@
 ---
 name: init-monorepo
 description: Initialize a language-agnostic Moon + Proto monorepo
-allowed-tools: Bash(mkdir *), Bash(touch *), Bash(proto *), Bash(moon *), Bash(git rev-parse *), Bash(git init), Read, Write, Glob
+allowed-tools: Bash(mkdir *), Bash(touch *), Bash(proto *), Bash(moon *), Bash(pnpm *), Bash(lefthook *), Bash(git rev-parse *), Bash(git init), Read, Write, Glob
 ---
 
 # /init-monorepo
@@ -26,21 +26,28 @@ This skill creates a bare monorepo foundation using Moon as the build system and
 ```
 {project}/
 ├── .claude/
-│   └── settings.json          # Claude Code permissions for moon/proto
+│   └── settings.json              # Claude Code permissions for moon/proto
+├── .github/
+│   └── workflows/
+│       └── release.yml            # Release Please GitHub Action
 ├── .moon/
-│   ├── workspace.yml          # Moon workspace configuration
-│   └── toolchains.yml         # Moon toolchain configuration (empty)
-├── .prototools                # Proto settings + moon version pinned
+│   ├── workspace.yml              # Moon workspace configuration
+│   └── toolchains.yml             # Moon toolchain configuration (empty)
+├── .prototools                    # Proto settings + moon/node/pnpm pinned
+├── .release-please-manifest.json  # Release Please manifest (empty initially)
 ├── .gitignore
 ├── .editorconfig
-├── lefthook.yml
-├── apps/                      # Application projects
+├── commitlint.config.mjs          # Commitlint configuration
+├── lefthook.yml                   # Git hooks (includes commit-msg for commitlint)
+├── package.json                   # Root package.json for commitlint
+├── release-please-config.json     # Release Please configuration
+├── apps/                          # Application projects
 │   └── .gitkeep
-├── packages/                  # Shared libraries
+├── packages/                      # Shared libraries
 │   └── .gitkeep
-├── modules/                   # Domain-specific modules
+├── modules/                       # Domain-specific modules
 │   └── .gitkeep
-├── scripts/                   # CLI tools and scripts
+├── scripts/                       # CLI tools and scripts
 │   └── .gitkeep
 └── README.md
 ```
@@ -158,11 +165,20 @@ Copy the following files from `templates/monorepo/`:
 | `moon-workspace.yml` | `.moon/workspace.yml` | Moon workspace configuration |
 | `moon-toolchains.yml` | `.moon/toolchains.yml` | Moon toolchain configuration |
 | `prototools` | `.prototools` | Proto settings (auto-install, auto-clean) |
-| `lefthook.yml` | `lefthook.yml` | Pre-commit hooks |
+| `lefthook.yml` | `lefthook.yml` | Git hooks (includes commit-msg for commitlint) |
 | `gitignore` | `.gitignore` | Git ignore patterns |
 | `editorconfig` | `.editorconfig` | Editor configuration |
+| `commitlint.config.mjs` | `commitlint.config.mjs` | Commitlint configuration |
+| `release-please-config.json` | `release-please-config.json` | Release Please configuration |
+| `release-please-manifest.json` | `.release-please-manifest.json` | Release Please manifest |
+| `github-workflows-release.yml` | `.github/workflows/release.yml` | Release Please GitHub Action |
 
 **Important:** Do NOT copy the `moon-tasks/` directory. Task definitions are added lazily by `/add-app`, `/add-lib`, and `/add-cli` when projects are created.
+
+**Note:** Create `.github/workflows/` directory before copying the release workflow:
+```bash
+mkdir -p .github/workflows
+```
 
 ### Step 7: Pin Moon Version with Proto
 
@@ -174,15 +190,57 @@ proto pin moon 2.0.0-rc.0 --resolve
 
 **Note:** This plugin requires Moon v2 for task inheritance features (`inheritedBy`). The `--resolve` flag pins the exact semantic version. Update to stable v2 when released.
 
-### Step 8: Install Moon via Proto
+### Step 8: Pin Node.js and pnpm with Proto
+
+Pin Node.js and pnpm for commitlint and monorepo tooling:
+
+```bash
+proto pin node lts --resolve
+proto pin pnpm lts --resolve
+```
+
+**Note:** Node.js and pnpm are required for commitlint and release-please tooling, regardless of the languages used in your projects.
+
+### Step 9: Install Tools via Proto
 
 ```bash
 proto use
 ```
 
-This installs Moon (and any other pinned tools) based on `.prototools`.
+This installs Moon, Node.js, pnpm, and any other pinned tools based on `.prototools`.
 
-### Step 9: Create README.md
+### Step 10: Create Root package.json
+
+Create a minimal `package.json` for commitlint:
+
+```json
+{
+  "name": "{project-name}",
+  "private": true,
+  "type": "module",
+  "devDependencies": {}
+}
+```
+
+### Step 11: Install Commitlint
+
+Install commitlint and the conventional config:
+
+```bash
+pnpm add -D @commitlint/cli @commitlint/config-conventional
+```
+
+### Step 12: Install Lefthook Hooks
+
+Initialize lefthook to register the git hooks:
+
+```bash
+lefthook install
+```
+
+This registers the `commit-msg` hook that runs commitlint on every commit.
+
+### Step 13: Create README.md
 
 Create `README.md` with the following content (replace `{project-name}` with actual name):
 
@@ -259,14 +317,16 @@ proto pin <tool> <version>
 ```
 ```
 
-### Step 10: Verify Setup
+### Step 14: Verify Setup
 
 ```bash
 moon --version
 proto --version
+node --version
+pnpm --version
 ```
 
-### Step 11: Summary
+### Step 15: Summary
 
 Print a summary:
 
@@ -274,20 +334,28 @@ Print a summary:
 Monorepo initialized successfully!
 
 Created:
-  - .claude/settings.json    (Claude Code permissions)
-  - .moon/workspace.yml      (workspace configuration)
-  - .moon/toolchains.yml     (toolchain configuration)
-  - .prototools              (pinned tool versions)
+  - .claude/settings.json           (Claude Code permissions)
+  - .github/workflows/release.yml   (Release Please workflow)
+  - .moon/workspace.yml             (workspace configuration)
+  - .moon/toolchains.yml            (toolchain configuration)
+  - .prototools                     (pinned tool versions)
+  - .release-please-manifest.json   (release manifest)
   - .gitignore
   - .editorconfig
-  - lefthook.yml
+  - commitlint.config.mjs           (commit message linting)
+  - lefthook.yml                    (git hooks)
+  - package.json                    (root package for tooling)
+  - release-please-config.json      (release configuration)
   - README.md
 
-Moon version pinned: <version from proto pin>
+Tools pinned:
+  - Moon: <version>
+  - Node.js: <version>
+  - pnpm: <version>
 
 Next steps:
   1. Add your first project: /add-app
-  2. Configure hooks: /hooks
+  2. Push to GitHub to enable Release Please
 ```
 
 ---
@@ -317,6 +385,55 @@ This keeps the monorepo clean and only includes what you actually use.
 ## Important Notes
 
 - **Moon is pinned** in `.prototools` for consistent builds
+- **Node.js and pnpm are always installed** for commitlint and monorepo tooling
+- **Commitlint enforces Conventional Commits** - all commits must follow the format
+- **Release Please automates versioning** - creates release PRs on push to main
+- **Independent releases** - each app/package can have its own version
 - **No task files initially** - added when first project of each type is created
 - **Language toolchains are lazy** - only configured when first needed
 - **No lock-in** - standard Moon/Proto setup, no plugin-specific modifications
+
+## Conventional Commits
+
+Commitlint enforces [Conventional Commits](https://www.conventionalcommits.org/). Format:
+
+```
+<type>(<scope>): <description>
+
+[optional body]
+
+[optional footer(s)]
+```
+
+**Types:** `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, `revert`
+
+**Examples:**
+```
+feat(api): add user authentication
+fix(web): resolve login redirect issue
+chore(deps): update dependencies
+```
+
+## Release Please
+
+Release Please creates release PRs automatically when commits are pushed to `main`. It:
+
+1. Analyzes commits since last release
+2. Determines version bump (major/minor/patch) based on commit types
+3. Creates a release PR with updated CHANGELOG.md
+4. When merged, creates a GitHub release with tags
+
+**Configuration:**
+- `release-please-config.json` - Release settings
+- `.release-please-manifest.json` - Current versions (updated automatically)
+
+**Adding a new package to releases:** When you create a new app/library, add it to `release-please-config.json`:
+
+```json
+{
+  "packages": {
+    "apps/my-app": {},
+    "packages/my-lib": {}
+  }
+}
+```
