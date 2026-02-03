@@ -1,5 +1,5 @@
 ---
-name: add
+name: fullstack-toolkit:add
 description: Add a new project to the monorepo (app, library, or CLI)
 ---
 

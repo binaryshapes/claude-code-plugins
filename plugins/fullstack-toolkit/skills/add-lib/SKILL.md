@@ -1,5 +1,5 @@
 ---
-name: add-lib
+name: fullstack-toolkit:add-lib
 description: Add a library to the monorepo (TypeScript or Python)
 allowed-tools: Bash(mkdir *), Bash(touch *), Bash(rm * packages/*), Bash(cp *), Bash(grep *), Bash(cd *), Bash(pnpm *), Bash(uv *), Bash(proto *), Bash(moon *), Read, Write, Glob, Skill
 ---

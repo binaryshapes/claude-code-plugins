@@ -1,5 +1,5 @@
 ---
-name: build
+name: fullstack-toolkit:build
 description: Build all projects in the monorepo
 ---
 

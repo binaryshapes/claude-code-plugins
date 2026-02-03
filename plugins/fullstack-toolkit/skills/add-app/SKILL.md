@@ -1,5 +1,5 @@
 ---
-name: add-app
+name: fullstack-toolkit:add-app
 description: Add an application to the monorepo (TypeScript or Python)
 allowed-tools: Bash(mkdir *), Bash(touch *), Bash(rm * apps/*), Bash(cp *), Bash(grep *), Bash(cd *), Bash(pnpm *), Bash(uv *), Bash(proto *), Bash(moon *), Read, Write, Glob, Skill
 ---

@@ -1,5 +1,5 @@
 ---
-name: toolchain
+name: fullstack-toolkit:toolchain
 description: Manage Proto toolchain configuration for all languages
 allowed-tools: Bash(proto *), Bash(pnpm *), Bash(uv *), Bash(grep *), Bash(cat *), Bash(mkdir *), Read, Write, Edit, Glob
 ---

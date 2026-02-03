@@ -1,5 +1,5 @@
 ---
-name: format
+name: fullstack-toolkit:format
 description: Format all code (Prettier for TS, Ruff for Python)
 ---
 

@@ -1,5 +1,5 @@
 ---
-name: init
+name: fullstack-toolkit:init
 description: Initialize a Moon + Proto monorepo
 ---
 

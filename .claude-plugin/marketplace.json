@@ -11,7 +11,7 @@
   "plugins": [
     {
       "name": "fullstack-toolkit",
-      "source": "./fullstack-toolkit",
+      "source": "./plugins/fullstack-toolkit",
       "description": "Modular toolkit for fullstack applications based on TypeScript and Python using Moon monorepo and Prototools",
       "version": "1.0.0",
       "author": {

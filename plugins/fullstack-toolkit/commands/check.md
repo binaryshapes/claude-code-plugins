@@ -1,5 +1,5 @@
 ---
-name: check
+name: fullstack-toolkit:check
 description: Run all quality checks (lint, typecheck, test)
 ---
 

@@ -1,5 +1,5 @@
 ---
-name: init-monorepo
+name: fullstack-toolkit:init-monorepo
 description: Initialize a language-agnostic Moon + Proto monorepo
 allowed-tools: Bash(mkdir *), Bash(touch *), Bash(proto *), Bash(moon *), Bash(pnpm *), Bash(lefthook *), Bash(git rev-parse *), Bash(git init), Read, Write, Glob
 ---
@@ -26,7 +26,7 @@ This skill creates a bare monorepo foundation using Moon as the build system and
 ```
 {project}/
 ├── .claude/
-│   └── settings.json              # Claude Code permissions for moon/proto
+│   └── settings.local.json        # Claude Code permissions (gitignored)
 ├── .github/
 │   └── workflows/
 │       └── release.yml            # Release Please GitHub Action
@@ -101,11 +101,11 @@ ls -A | grep -v '^\.git$' | head -1
 mkdir -p .claude
 ```
 
-Then copy the settings template from `templates/monorepo/claude-settings.json` to `.claude/settings.json`.
+Then copy the settings template from `templates/monorepo/claude-settings.local.json` to `.claude/settings.local.json`.
 
 **Why this is first:** The settings file grants permission for all fullstack-toolkit skills. Once created, Claude Code will not ask for permission to execute skill commands during this session and future sessions.
 
-**Note:** Users can create `.claude/settings.local.json` for personal overrides (this file is gitignored by default).
+**Why `.settings.local.json`:** This file is gitignored by default because skill permissions are user-specific (not all team members may have the plugin installed). Users who need to share permissions across the team can manually create `.claude/settings.json` instead.
 
 ### Step 2: Gather Information
 
@@ -160,7 +160,7 @@ Copy the following files from `templates/monorepo/`:
 
 | Template File | Destination | Description |
 |---------------|-------------|-------------|
-| `claude-settings.json` | `.claude/settings.json` | Claude Code skill permissions |
+| `claude-settings.local.json` | `.claude/settings.local.json` | Claude Code skill permissions (gitignored) |
 | `moon-workspace.yml` | `.moon/workspace.yml` | Moon workspace configuration |
 | `moon-toolchains.yml` | `.moon/toolchains.yml` | Moon toolchain configuration |
 | `prototools` | `.prototools` | Proto settings (auto-install, auto-clean) |
@@ -334,7 +334,7 @@ Print a summary:
 Monorepo initialized successfully!
 
 Created:
-  - .claude/settings.json           (Claude Code permissions)
+  - .claude/settings.local.json     (Claude Code permissions, gitignored)
   - .github/workflows/release.yml   (Release Please workflow)
   - .moon/workspace.yml             (workspace configuration)
   - .moon/toolchains.yml            (toolchain configuration)

@@ -1,5 +1,5 @@
 ---
-name: hooks
+name: fullstack-toolkit:hooks
 description: Configure hooks for pre-commit, CI/CD, and Claude Code
 allowed-tools: Bash(lefthook *), Bash(pnpm *), Bash(uv *), Bash(mkdir *), Read, Write, Edit, Glob
 ---
