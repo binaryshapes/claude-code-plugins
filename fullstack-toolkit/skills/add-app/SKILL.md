@@ -206,16 +206,19 @@ pnpm create next-app@latest apps/{{name}} \
   --src-dir \
   --turbopack \
   --disable-git \
-  --use-pnpm \
+  --skip-install \
   --import-alias "@/*"
 ```
 
 **Important flags:**
 - `--yes` - Use defaults for all options (required for non-interactive mode)
 - `--disable-git` - Skip git initialization (monorepo already has git)
+- `--skip-install` - Skip npm install (will be done at monorepo root level)
 - `--turbopack` - Enable Turbopack (default in recent versions)
 - `--tailwind` - Include Tailwind CSS (default in recent versions)
 - `--typescript` - TypeScript project (default in recent versions)
+
+**Note:** We omit `--use-pnpm` because `--skip-install` skips the install step entirely. Dependencies will be installed from the monorepo root.
 
 #### 5b. Post-processing
 
@@ -365,8 +368,10 @@ pnpm create next-app@latest apps/{{name}} \
 #### 5a. Run Official CLI
 
 ```bash
-pnpm create expo-app@latest apps/{{name}} --template blank-typescript
+pnpm create expo-app@latest apps/{{name}} --template blank-typescript --no-install
 ```
+
+**Note:** `--no-install` skips dependency installation. Dependencies will be installed from the monorepo root.
 
 #### 5b. Post-processing
 
@@ -552,10 +557,10 @@ If the user opted for NativeWind support, perform these additional steps:
 #### 5a. Run Official CLI
 
 ```bash
-pnpm create hono@latest apps/{{name}} --template cloudflare-workers
+pnpm create hono@latest apps/{{name}} -- --template cloudflare-workers --install false
 ```
 
-> Note: User may be prompted to select a template. Recommend `cloudflare-workers` for edge deployment or `nodejs` for traditional Node.js.
+**Note:** The `--install false` flag skips dependency installation. Dependencies will be installed from the monorepo root. The `--` is required to pass flags through npm/pnpm to create-hono.
 
 #### 5b. Post-processing
 
@@ -614,10 +619,12 @@ pnpm create hono@latest apps/{{name}} --template cloudflare-workers
 ```bash
 pnpm dlx @nestjs/cli@latest new {{name}} \
   --directory apps/{{name}} \
-  --package-manager pnpm \
   --skip-git \
+  --skip-install \
   --strict
 ```
+
+**Note:** `--skip-install` skips dependency installation. Dependencies will be installed from the monorepo root. We omit `--package-manager` since install is skipped.
 
 #### 5b. Post-processing
 
