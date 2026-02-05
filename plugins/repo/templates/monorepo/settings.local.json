@@ -1,0 +1,56 @@
+{
+  "extraKnownMarketplaces": {
+    "binaryshapes": {
+      "source": {
+        "source": "github",
+        "repo": "binaryshapes/claude-code-plugins"
+      }
+    }
+  },
+  "enabledPlugins": {
+    "bs-repo@binaryshapes": true,
+    "bs-app@binaryshapes": true,
+    "bs-lib@binaryshapes": true,
+    "bs-cli@binaryshapes": true,
+    "bs-tools@binaryshapes": true,
+    "bs-quality@binaryshapes": true
+  },
+  "permissions": {
+    "allow": [
+      "Skill(bs:repo:init)",
+      "Skill(bs:app:nextjs)",
+      "Skill(bs:app:expo)",
+      "Skill(bs:app:hono)",
+      "Skill(bs:app:nestjs)",
+      "Skill(bs:app:orpc)",
+      "Skill(bs:app:fastapi)",
+      "Skill(bs:app:minimal)",
+      "Skill(bs:lib:ts)",
+      "Skill(bs:lib:react)",
+      "Skill(bs:lib:ui)",
+      "Skill(bs:lib:py)",
+      "Skill(bs:cli:ts)",
+      "Skill(bs:cli:py)",
+      "Skill(bs:tools:moon)",
+      "Skill(bs:tools:release)",
+      "Skill(bs:tools:commitlint)",
+      "Skill(bs:tools:prettier)",
+      "Skill(bs:tools:eslint)",
+      "Skill(bs:tools:typescript)",
+      "Skill(bs:tools:tsup)",
+      "Bash(mkdir *)",
+      "Bash(mkdir -p *)",
+      "Bash(touch *)",
+      "Bash(proto *)",
+      "Bash(moon *)",
+      "Bash(pnpm *)",
+      "Bash(node *)",
+      "Bash(npx *)",
+      "Bash(git *)",
+      "Bash(ls *)",
+      "Bash(lefthook *)",
+      "Bash(basename *)",
+      "Bash(pwd)"
+    ]
+  }
+}
