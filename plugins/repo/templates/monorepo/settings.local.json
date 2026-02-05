@@ -31,6 +31,7 @@
       "Skill(bs:lib:py)",
       "Skill(bs:cli:ts)",
       "Skill(bs:cli:py)",
+      "Skill(bs:tools:proto)",
       "Skill(bs:tools:moon)",
       "Skill(bs:tools:release)",
       "Skill(bs:tools:commitlint)",

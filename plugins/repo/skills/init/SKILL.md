@@ -203,6 +203,7 @@ moon check --all            # Run all checks
 ## Development Tools
 
 ```bash
+/bs:tools:proto        # Pin toolchains (node, pnpm, python, uv, lefthook)
 /bs:tools:typescript   # Configure TypeScript + Moon toolchain
 /bs:tools:eslint       # Configure ESLint
 /bs:tools:prettier     # Configure Prettier
@@ -240,13 +241,10 @@ Tools pinned:
   - Moon: <version>
 
 Next steps:
-  1. Add your first project: /bs:app:nextjs, /bs:lib:ts, etc.
-  2. Configure toolchain: /bs:tools:typescript, /bs:tools:eslint, /bs:tools:prettier
-  3. Optional: /bs:tools:commitlint for pre-commit hooks
-  4. Optional: /bs:tools:release for automated releases
-
-Note: Language toolchains (Node.js, Python) are installed automatically
-when you add your first project of that type.
+  1. Pin toolchains: /bs:tools:proto node pnpm
+  2. Configure TypeScript: /bs:tools:typescript
+  3. Add your first project: /bs:app:nextjs, /bs:lib:ts, etc.
+  4. Optional: /bs:tools:eslint, /bs:tools:prettier, /bs:tools:commitlint
 ```
 
 ---

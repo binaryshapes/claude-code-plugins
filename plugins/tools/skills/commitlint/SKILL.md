@@ -1,7 +1,7 @@
 ---
 name: bs:tools:commitlint
 description: Configure commitlint and pre-commit hooks with Lefthook
-allowed-tools: Bash(proto *), Bash(pnpm *), Bash(pnpm init), Bash(lefthook *), Bash(mkdir *), Bash(ls *), Read, Write, Edit, Glob
+allowed-tools: Bash(pnpm *), Bash(lefthook *), Bash(ls *), Read, Write, Edit, Glob
 ---
 
 # /bs:tools:commitlint
@@ -27,14 +27,13 @@ This skill sets up:
 {project}/
 ├── commitlint.config.mjs    # Commitlint configuration (NEW)
 ├── lefthook.yml             # Git hooks configuration (NEW/MODIFIED)
-├── .prototools              # Lefthook + Node.js + pnpm pinned (MODIFIED)
-└── package.json             # Created if missing, commitlint deps added (NEW/MODIFIED)
+└── package.json             # Added commitlint dependencies (MODIFIED)
 ```
 
 ## Prerequisites
 
 - Monorepo initialized with `/bs:repo:init`
-- Proto installed
+- Toolchains pinned via `/bs:tools:proto node pnpm lefthook`
 
 ## Template Resolution
 
@@ -72,41 +71,32 @@ ls .moon/workspace.yml
 
 If not found, inform user to run `/bs:repo:init` first.
 
-### Step 3: Ensure Node.js and pnpm Are Available
+### Step 3: Verify Toolchains
 
-Check if Node.js and pnpm are pinned in `.prototools`:
+Verify that `node`, `pnpm`, and `lefthook` are available:
 
 ```bash
 proto status
 ```
 
-If Node.js or pnpm are NOT pinned, pin them now:
+If any of `node`, `pnpm`, or `lefthook` are NOT pinned, inform the user:
 
-```bash
-proto pin node lts --resolve
-proto pin pnpm latest --resolve
-proto use
+```
+Required toolchains are missing. Run first:
+/bs:tools:proto node pnpm lefthook
 ```
 
-This is required because `/bs:repo:init` only pins Moon — Node.js and pnpm are added when the first TypeScript tooling is needed.
+**Do NOT attempt to pin tools here.** Toolchain management is handled by `/bs:tools:proto`.
 
-### Step 4: Ensure package.json Exists
-
-Check if root `package.json` exists:
+Also verify `package.json` exists:
 
 ```bash
 ls package.json
 ```
 
-If it does NOT exist, create it:
+If missing, inform user to run `/bs:tools:proto node pnpm` which creates it.
 
-```bash
-pnpm init
-```
-
-Then edit it to add `"type": "module"` and set `"private": true`.
-
-### Step 5: Ask Configuration Questions
+### Step 4: Ask Configuration Questions
 
 Ask the user:
 
@@ -116,22 +106,7 @@ Ask the user:
    - Detect automatically based on installed tools (recommended)
    - Manual selection
 
-### Step 6: Register and Pin Lefthook with Proto
-
-Lefthook is NOT a built-in Proto plugin. It must be registered first:
-
-```bash
-proto plugin add lefthook "https://raw.githubusercontent.com/nicklasmoeller/proto-lefthook-plugin/main/plugin.toml"
-```
-
-Then pin and install:
-
-```bash
-proto pin lefthook latest --resolve
-proto use
-```
-
-### Step 7: Create commitlint.config.mjs
+### Step 5: Create commitlint.config.mjs
 
 Read the template from `TEMPLATES_DIR/commitlint.config.mjs`.
 
@@ -148,17 +123,17 @@ export default {
 
 Otherwise, use the template as-is.
 
-### Step 8: Install Commitlint Dependencies
+### Step 6: Install Commitlint Dependencies
 
 ```bash
 pnpm add -D @commitlint/cli @commitlint/config-conventional
 ```
 
-### Step 9: Create/Update lefthook.yml
+### Step 7: Create/Update lefthook.yml
 
 Read the template from `TEMPLATES_DIR/lefthook.yml` as the base.
 
-### Step 10: Detect Languages and Add Pre-commit Hooks
+### Step 8: Detect Languages and Add Pre-commit Hooks
 
 Check which languages/tools are in the project:
 
@@ -200,13 +175,13 @@ pre-commit:
 
 Merge all detected hooks into the `pre-commit.commands` section.
 
-### Step 11: Install Lefthook Hooks
+### Step 9: Install Lefthook Hooks
 
 ```bash
 lefthook install
 ```
 
-### Step 12: Summary
+### Step 10: Summary
 
 ```
 Commitlint + Lefthook configured successfully!
@@ -250,6 +225,7 @@ All commits must follow the [Conventional Commits](https://www.conventionalcommi
 ```
 
 **Types:**
+
 - `feat` - New feature
 - `fix` - Bug fix
 - `docs` - Documentation only
