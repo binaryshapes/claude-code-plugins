@@ -51,7 +51,7 @@ Templates are located relative to this SKILL.md file at `../../templates/monorep
 **To find the absolute path**, run this glob once at the start:
 
 ```
-Glob: ~/.claude/plugins/cache/**/bs-repo/**/templates/monorepo/settings.local.json
+Glob: $HOME/.claude/plugins/cache/**/bs-repo/**/templates/monorepo/settings.local.json
 ```
 
 Strip the filename to get the template directory. Then use `Read` to read each template and `Write` to create destination files.
@@ -73,7 +73,7 @@ When the user invokes `/bs:repo:init`, follow these steps:
 1. **Find templates directory** (one glob, one time):
 
 ```
-Glob: ~/.claude/plugins/cache/**/bs-repo/**/templates/monorepo/settings.local.json
+Glob: $HOME/.claude/plugins/cache/**/bs-repo/**/templates/monorepo/settings.local.json
 ```
 
 2. **Read** the matched `settings.local.json`
