@@ -1,8 +1,0 @@
-$schema: 'https://moonrepo.dev/schemas/project.json'
-
-layer: 'library'
-language: 'typescript'
-tags: ['library', 'ui', 'react']
-
-# Tasks (dev, build, lint, typecheck, clean) are automatically
-# inherited from .moon/tasks/typescript-lib.yml
